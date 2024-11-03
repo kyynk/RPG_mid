@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 51984131
+    locked: 0
+  - name: ActionMenu
+    uniqueID: 838487689
+    locked: 0
+  - name: Character
+    uniqueID: 292829629
+    locked: 0
+  - name: MatchInfo
+    uniqueID: 2810515675
+    locked: 0
