@@ -1,8 +1,6 @@
-using UnityEngine;
-
 namespace BattleState
 {
-    public class Player : MonoBehaviour
+    public class Player
     {
         public int hp;
         public int atk;

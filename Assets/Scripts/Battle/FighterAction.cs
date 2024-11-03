@@ -5,6 +5,7 @@ namespace BattleState
 {
     public class FighterAction : MonoBehaviour
     {
+        public GameManager gameManager;
         public Button attackButton;
         public Button defenceButton;
 
@@ -19,13 +20,13 @@ namespace BattleState
         void Update()
         {
             // Trigger Attack with Spacebar or Left Mouse Click
-            if (Input.GetKey("a"))
+            if (Input.GetKeyDown("a"))
             {
                 Attack();
             }
 
             // Trigger Defence with D key or Right Mouse Click
-            if (Input.GetKey("d"))
+            if (Input.GetKeyDown("d"))
             {
                 Defence();
             }
@@ -35,6 +36,7 @@ namespace BattleState
         {
             Debug.Log("Attack triggered!");
             // Add attack functionality here
+            gameManager.NewTurn();
         }
 
         public void Defence()

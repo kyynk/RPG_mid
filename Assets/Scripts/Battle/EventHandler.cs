@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BattleState
 {
-    public class EventHandler : MonoBehaviour
+    public class EventHandler
     {
         bool isCritical;
         bool isHeal;
@@ -16,8 +16,11 @@ namespace BattleState
         public void OnPlayerHeal(Player player)
         {
             isHeal = Random.value < 0.3f;
-            int amount = Random.Range(10, 20);
-            player.Heal(amount);
+            if (isHeal)
+            {
+                int amount = Random.Range(10, 20);
+                player.Heal(amount);
+            }
         }
 
         // when player take damage, the amount is random between 10 and 20 (random events)
