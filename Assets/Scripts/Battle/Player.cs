@@ -2,8 +2,9 @@ namespace BattleState
 {
     public class Player
     {
-        public int hp;
-        public int atk;
+        public int hp { get; private set; }
+        public int atk { get; private set; }
+        public bool isDefend {  get; set; }
 
         public Player()
         {
@@ -15,6 +16,8 @@ namespace BattleState
             // need to use readfile to get the value of hp and atk
             hp = 100;
             atk = 10;
+
+            isDefend = false;
         }
 
         public void Attack(Player enemy, bool isCritical)
@@ -36,7 +39,15 @@ namespace BattleState
 
         public void TakeDamage(int amount)
         {
-            hp -= amount;
+            if (isDefend)
+            {
+                hp -= amount / 2;
+                isDefend = false;
+            }
+            else
+            {
+                hp -= amount;
+            }
         }
     }
 }

@@ -36,13 +36,14 @@ namespace BattleState
         {
             Debug.Log("Attack triggered!");
             // Add attack functionality here
-            gameManager.NewTurn();
+            gameManager.NextTurn("attack");
         }
 
         public void Defence()
         {
             Debug.Log("Defence triggered!");
             // Add defence functionality here
+            gameManager.NextTurn("defence");
         }
     }
 }

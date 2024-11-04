@@ -32,15 +32,27 @@ namespace BattleState
             playerTurn = player;
         }
 
-        public void NewTurn()
+        public void NextTurn(string action)
         {
             // every turn need two players to attack each other, so we need to get the current player and the opponent
             Player currentPlayer = players[playerTurn];
             Player opponent = players[(playerTurn + 1) % 2];
             
-            eventHandler.OnPlayerAttack(currentPlayer, opponent);
+            if (action == "attack")
+            {
+                Debug.Log("Player " + playerTurn + " attack!");
+                eventHandler.OnPlayerAttack(currentPlayer, opponent);
+            }
+            else if (action == "defence")
+            {
+                Debug.Log("Player " + playerTurn + " defence!");
+                currentPlayer.isDefend = true;
+            }
+            else
+            {
+                Debug.Log("Invalid action!");
+            }
 
-            Debug.Log("Player " + playerTurn + " attack!");
             Debug.Log("Player 0" + " HP: " + players[0].hp);
             Debug.Log("Player 1" + " HP: " + players[1].hp);
 
