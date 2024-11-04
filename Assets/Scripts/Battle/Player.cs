@@ -1,10 +1,10 @@
 namespace BattleState
 {
-    public class Player
+    public class Player : IPlayer
     {
-        public int hp { get; private set; }
-        public int atk { get; private set; }
-        public bool isDefend {  get; set; }
+        public int HP { get; set; }
+        public int ATK { get; set; }
+        public bool IsDefend {  get; set; }
 
         public Player()
         {
@@ -14,39 +14,39 @@ namespace BattleState
         public void ResetStatus()
         {
             // need to use readfile to get the value of hp and atk
-            hp = 100;
-            atk = 10;
+            HP = 100;
+            ATK = 10;
 
-            isDefend = false;
+            IsDefend = false;
         }
 
-        public void Attack(Player enemy, bool isCritical)
+        public void Attack(IPlayer enemy, bool isCritical)
         {
             if (isCritical)
             {
-                enemy.TakeDamage(atk * 2);
+                enemy.TakeDamage(ATK * 2);
             }
             else
             {
-                enemy.TakeDamage(atk);
+                enemy.TakeDamage(ATK);
             }
         }
 
         public void Heal(int amount)
         {
-            hp += amount;
+            HP += amount;
         }
 
         public void TakeDamage(int amount)
         {
-            if (isDefend)
+            if (IsDefend)
             {
-                hp -= amount / 2;
-                isDefend = false;
+                HP -= amount / 2;
+                IsDefend = false;
             }
             else
             {
-                hp -= amount;
+                HP -= amount;
             }
         }
     }

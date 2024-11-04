@@ -19,13 +19,13 @@ namespace BattleState
         // Update is called once per frame
         void Update()
         {
-            // Trigger Attack with Spacebar or Left Mouse Click
+            // Trigger Attack with A key or Left Mouse Click
             if (Input.GetKeyDown("a"))
             {
                 Attack();
             }
 
-            // Trigger Defence with D key or Right Mouse Click
+            // Trigger Defence with D key or Left Mouse Click
             if (Input.GetKeyDown("d"))
             {
                 Defence();
@@ -35,14 +35,12 @@ namespace BattleState
         public void Attack()
         {
             Debug.Log("Attack triggered!");
-            // Add attack functionality here
             gameManager.NextTurn("attack");
         }
 
         public void Defence()
         {
             Debug.Log("Defence triggered!");
-            // Add defence functionality here
             gameManager.NextTurn("defence");
         }
     }
