@@ -1,15 +1,15 @@
-namespace BattleState
+namespace RPGBattle
 {
     public interface IPlayer
     {
-        int HP { get; set; }
-        int ATK { get; set; }
-
-        bool IsDefend { get; set; }
+        Character Character { get; set; }
 
         void ResetStatus();
         void Attack(IPlayer enemy, bool isCritical);
+        void Defend();
         void Heal(int amount);
         void TakeDamage(int amount);
+        // Is character HP <= 0
+        bool IsCharacterDead();
     }
 }

@@ -1,53 +1,60 @@
-namespace BattleState
+using UnityEngine;
+
+namespace RPGBattle
 {
     public class Player : IPlayer
     {
-        public int HP { get; set; }
-        public int ATK { get; set; }
-        public bool IsDefend {  get; set; }
+        public Character Character {  get; set; }
+        private HealthBar healthBar;
 
-        public Player()
+        public Player(Character _character, string playerHealthBar)
         {
-            ResetStatus();
+            Character = _character;
+            GameObject healthBarImg = GameObject.FindGameObjectWithTag(playerHealthBar);
+            if (healthBarImg == null)
+            {
+                Debug.LogError($"Health bar image for {playerHealthBar} not found!");
+            }
+            healthBar = new HealthBar(healthBarImg.GetComponent<UnityEngine.UI.Image>());
+            healthBar.SetMaxHealth(Character.HP);
         }
 
         public void ResetStatus()
         {
-            // need to use readfile to get the value of hp and atk
-            HP = 100;
-            ATK = 10;
-
-            IsDefend = false;
+            Character.ResetStatus();
+            healthBar.SetHealth(Character.HP);
         }
 
         public void Attack(IPlayer enemy, bool isCritical)
         {
-            if (isCritical)
-            {
-                enemy.TakeDamage(ATK * 2);
-            }
-            else
-            {
-                enemy.TakeDamage(ATK);
-            }
+            int damage = isCritical ? Character.ATK * 2 : Character.ATK;
+            enemy.TakeDamage(damage);
+        }
+
+        public void Defend()
+        {
+            Character.IsDefend = true;
         }
 
         public void Heal(int amount)
         {
-            HP += amount;
+            Character.Heal(amount);
+            healthBar.SetHealth(Character.HP);
         }
 
         public void TakeDamage(int amount)
         {
-            if (IsDefend)
+            Character.TakeDamage(amount);
+            if (Character.HP < 0)
             {
-                HP -= amount / 2;
-                IsDefend = false;
+                Character.HP = 0;
             }
-            else
-            {
-                HP -= amount;
-            }
+            healthBar.SetHealth(Character.HP);
+        }
+
+        public bool IsCharacterDead()
+        {
+            return Character.HP <= 0;
         }
     }
 }

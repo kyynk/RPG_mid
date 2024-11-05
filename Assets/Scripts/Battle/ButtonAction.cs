@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleState
+namespace RPGBattle
 {
-    public class FighterAction : MonoBehaviour
+    public class ButtonAction : MonoBehaviour
     {
-        public GameManager gameManager;
+        public BattleSystem battleSystem;
         public Button attackButton;
         public Button defenceButton;
 
@@ -35,13 +35,13 @@ namespace BattleState
         public void Attack()
         {
             Debug.Log("Attack triggered!");
-            gameManager.NextTurn("attack");
+            battleSystem.NextTurn("attack");
         }
 
         public void Defence()
         {
             Debug.Log("Defence triggered!");
-            gameManager.NextTurn("defence");
+            battleSystem.NextTurn("defence");
         }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleState
+namespace RPGBattle
 {
     public class EventHandler
     {
@@ -13,6 +13,11 @@ namespace BattleState
             player.Attack(enemy, isCritical);
         }
 
+        public void OnPlayerDefend(IPlayer player)
+        {
+            player.Defend();
+        }
+
         public void OnPlayerHeal(IPlayer player)
         {
             isHeal = Random.value < 0.3f;
@@ -23,7 +28,7 @@ namespace BattleState
             }
         }
 
-        // when player take damage, the amount is random between 10 and 20 (random events)
+        // when player take damage, the amount is random between 5 and 10 (random events)
         public void OnPlayerTakeDamage(IPlayer player)
         {
             int amount = Random.Range(5, 10);
