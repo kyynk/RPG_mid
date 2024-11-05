@@ -6,6 +6,7 @@ TagManager:
   tags:
   - L_HP
   - R_HP
+  - TurnInfo
   layers:
   - Default
   - TransparentFX
