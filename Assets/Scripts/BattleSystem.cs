@@ -13,6 +13,12 @@ namespace RPGBattle
         private int[] playerPoint;
         private int firstPlayer;
 
+        // UI references for MatchInfo
+        public GameObject matchInfoPanel; // MatchInfo panel
+        public TMP_Text matchResultText; // Match result text
+        public TMP_Text pointResultText; // Point result text
+        public ButtonAction buttonAction;
+
         void Start()
         {
             eventHandler = new EventHandler();
@@ -23,6 +29,8 @@ namespace RPGBattle
             turnCount = 1;
             playerPoint = new int[2] { 0, 0 };
             firstPlayer = 0;
+            
+            matchInfoPanel.SetActive(false);
             UpdateTurnText();
         }
 
@@ -59,11 +67,14 @@ namespace RPGBattle
             if (firstPlayer != playerTurn)
             {
                 turnCount++;
-                UpdateTurnText();
             }
             if (IsNewMatch())
             {
                 NewMatch();
+            }
+            else
+            {
+                UpdateTurnText();
             }
 
             playerTurn = (playerTurn + 1) % 2;
@@ -78,7 +89,9 @@ namespace RPGBattle
         public void NewMatch()
         {
             WhoWin();
-            turnCount = 0;
+            matchInfoPanel.SetActive(true);
+            buttonAction.DisableFighterActionButtons();
+            turnCount = 1;
             foreach (Player player in players)
             {
                 player.ResetStatus();
@@ -91,17 +104,21 @@ namespace RPGBattle
             if (players[1].IsCharacterDead())
             {
                 Debug.Log("Player 0 win!");
+                matchResultText.text = "Player A Win";
                 playerPoint[0]++;
             }
             else if (players[0].IsCharacterDead())
             {
                 Debug.Log("Player 1 win!");
+                matchResultText.text = "Player B Win";
                 playerPoint[1]++;
             }
             else
             {
                 Debug.Log("Draw!");
+                matchResultText.text = "Draw";
             }
+            pointResultText.text = playerPoint[0] + " - " + playerPoint[1];
             if (IsGameOver())
             {
                 Debug.Log("Game Over!");
@@ -141,6 +158,13 @@ namespace RPGBattle
             {
                 Debug.LogError("TurnText UI element is not assigned in the Inspector!");
             }
+        }
+
+        public void ContinueToNextMatch()
+        {
+            matchInfoPanel.SetActive(false); // Hide MatchInfo
+            buttonAction.EnableFighterActionButtons(); // Re-enable buttons
+            UpdateTurnText();
         }
     }
 }

@@ -7,6 +7,8 @@ TagManager:
   - L_HP
   - R_HP
   - TurnInfo
+  - PointResult
+  - MatchResult
   layers:
   - Default
   - TransparentFX
