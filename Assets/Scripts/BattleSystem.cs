@@ -13,7 +13,8 @@ namespace RPGBattle
         private int[] playerPoint;
         private int firstPlayer;
 
-        // UI references for MatchInfo
+        // UI references
+        public GameObject turnInfoText;
         public GameObject matchInfoPanel; // MatchInfo panel
         public TMP_Text matchResultText; // Match result text
         public TMP_Text pointResultText; // Point result text
@@ -31,6 +32,7 @@ namespace RPGBattle
             firstPlayer = 0;
             
             matchInfoPanel.SetActive(false);
+            turnInfoText.SetActive(true);
             UpdateTurnText();
         }
 
@@ -90,6 +92,7 @@ namespace RPGBattle
         {
             WhoWin();
             matchInfoPanel.SetActive(true);
+            turnInfoText.SetActive(false);
             buttonAction.DisableFighterActionButtons();
             turnCount = 1;
             foreach (Player player in players)
@@ -163,6 +166,7 @@ namespace RPGBattle
         public void ContinueToNextMatch()
         {
             matchInfoPanel.SetActive(false); // Hide MatchInfo
+            turnInfoText.SetActive(true); // Show TurnInfo
             buttonAction.EnableFighterActionButtons(); // Re-enable buttons
             UpdateTurnText();
         }
