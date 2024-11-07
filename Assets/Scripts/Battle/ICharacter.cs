@@ -5,6 +5,7 @@ namespace RPGBattle
         int HP { get; set; }
         int ATK { get; set; }
         bool IsDefend { get; set; }
+        string Name { get; }
 
         void ResetStatus();
         void Heal(int amount);

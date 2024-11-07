@@ -24,19 +24,31 @@ namespace RPGBattle
         {
             eventHandler = new EventHandler();
             players = new IPlayer[2];
-            players[0] = new Player(new Character(), "L_HP");
-            players[1] = new Player(new Character(), "R_HP");
+            players[0] = new Player(new Character("Giant"), "L_HP");
+            players[1] = new Player(new Character("Paladin"), "R_HP");
+            playerPoint = new int[2] { 0, 0 };
+            ResetAllSettings();
+        }
+
+        public void ResetAllSettings()
+        {
+            foreach (Player player in players)
+            {
+                player.ResetStatus();
+            }
+            for (int i = 0; i < playerPoint.Length; i++)
+            {
+                playerPoint[i] = 0;
+            }
             playerTurn = 0;
             turnCount = 1;
-            playerPoint = new int[2] { 0, 0 };
             firstPlayer = 0;
-            
             matchInfoPanel.SetActive(false);
             turnInfoText.SetActive(true);
             UpdateTurnText();
         }
 
-        public void SelectWhoFirst(int player)
+            public void SelectWhoFirst(int player)
         {
             firstPlayer = player;
             playerTurn = player;
