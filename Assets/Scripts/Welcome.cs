@@ -1,26 +1,107 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class Welcome : MonoBehaviour
+namespace RPGBattle
 {
-    public void StartGame()
+    public class Welcome : MonoBehaviour
     {
-        // will show text "Game Started"
-        Debug.Log("Game Started");
-    }
+        public BattleSystem battleSystem;
+        public GameObject hint;
+        public GameObject whoFirst;
+        public Button whoFirstButton;
+        public Button hintButton;
+        public Button startButton;
+        public Button exitButton;
+        public Button playerAButton;
+        public Button playerBButton;
+        public Button randomButton;
+        public GameObject selectIconA;
+        public GameObject selectIconB;
 
-    public void Help()
-    {
-        // will show text "Help"
-        Debug.Log("Help");
-        // will show text like how to control or play the game
-        Debug.Log("How to control or play the game");
-    }
+        private string filePath;
 
-    public void ExitGame()
-    {
-        // will show text "Game Exited"
-        Debug.Log("Game Exited");
+        void Start()
+        {
+            filePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt"); // Set file path
+
+            whoFirstButton.onClick.AddListener(ShowWhoFirst);
+            hintButton.onClick.AddListener(ShowHint);
+            startButton.onClick.AddListener(StartGame);
+            exitButton.onClick.AddListener(ExitGame);
+
+            playerAButton.onClick.AddListener(PlayerAFirst);
+            playerBButton.onClick.AddListener(PlayerBFirst);
+            randomButton.onClick.AddListener(RandomFirst);
+            PlayerAFirst();
+            hint.SetActive(false);
+            whoFirst.SetActive(false);
+        }
+
+        public void ShowWhoFirst()
+        {
+            Debug.Log("Show Who First");
+            hint.SetActive(false);
+            whoFirst.SetActive(true);
+        }
+
+        public void PlayerAFirst()
+        {
+            selectIconA.SetActive(true);
+            selectIconB.SetActive(false);
+            WriteSelectionToFile("Player A");
+        }
+
+        public void PlayerBFirst()
+        {
+            selectIconA.SetActive(false);
+            selectIconB.SetActive(true);
+            WriteSelectionToFile("Player B");
+        }
+        private void WriteSelectionToFile(string selection)
+        {
+            try
+            {
+                File.WriteAllText(filePath, selection); // Write selection to file
+                Debug.Log($"Selection '{selection}' written to {filePath}");
+            }
+            catch (IOException ex)
+            {
+                Debug.LogError($"Failed to write to file: {ex.Message}");
+            }
+        }
+
+        public void RandomFirst()
+        {
+            if (UnityEngine.Random.Range(0, 2) == 0)
+            {
+                PlayerAFirst();
+            }
+            else
+            {
+                PlayerBFirst();
+            }
+
+        }
+
+        public void ShowHint()
+        {
+            Debug.Log("Show Hint");
+            hint.SetActive(true);
+            whoFirst.SetActive(false);
+        }
+
+        public void StartGame()
+        {
+            Debug.Log("Game Started");
+            SceneManager.LoadScene("BattleScene");
+        }
+
+        public void ExitGame()
+        {
+            Debug.Log("Game Exited");
+            Application.Quit();
+        }
     }
 }
