@@ -48,7 +48,7 @@ namespace RPGBattle
             UpdateTurnText();
         }
 
-            public void SelectWhoFirst(int player)
+            public void SetFirstPlayer(int player)
         {
             firstPlayer = player;
             playerTurn = player;
@@ -106,11 +106,6 @@ namespace RPGBattle
             matchInfoPanel.SetActive(true);
             turnInfoText.SetActive(false);
             buttonAction.DisableFighterActionButtons();
-            turnCount = 1;
-            foreach (Player player in players)
-            {
-                player.ResetStatus();
-            }
         }
 
         public void WhoWin()
@@ -180,6 +175,11 @@ namespace RPGBattle
             matchInfoPanel.SetActive(false); // Hide MatchInfo
             turnInfoText.SetActive(true); // Show TurnInfo
             buttonAction.EnableFighterActionButtons(); // Re-enable buttons
+            turnCount = 1;
+            foreach (Player player in players)
+            {
+                player.ResetStatus();
+            }
             UpdateTurnText();
         }
     }
