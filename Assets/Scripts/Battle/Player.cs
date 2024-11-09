@@ -38,7 +38,7 @@ namespace RPGBattle
         {
             Character.Attack(isCritical);
             int damage = isCritical ? Character.ATK * 2 : Character.ATK;
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage, false);
         }
 
         public void Defend()
@@ -53,9 +53,9 @@ namespace RPGBattle
             healthBar.SetHealth(Character.HP);
         }
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int amount, bool isEventDamage)
         {
-            Character.TakeDamage(amount);
+            Character.TakeDamage(amount, isEventDamage);
             shieldImg.SetActive(Character.IsDefend);
             if (Character.HP < 0)
             {

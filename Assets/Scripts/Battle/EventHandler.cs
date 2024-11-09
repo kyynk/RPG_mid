@@ -31,6 +31,10 @@ namespace RPGBattle
             player.Defend();
         }
 
+        /// <summary>
+        /// random event for player to heal
+        /// </summary>
+        /// <param name="player"></param>
         public void OnPlayerHeal(IPlayer player)
         {
             float healRate = LoadEventConfigFromFile("heal_rate", player);
@@ -42,6 +46,10 @@ namespace RPGBattle
             }
         }
 
+        /// <summary>
+        /// random event for player to take damage
+        /// </summary>
+        /// <param name="player"></param>
         public void OnPlayerTakeDamage(IPlayer player)
         {
             float damageRate = LoadEventConfigFromFile("damage_rate", player);
@@ -49,7 +57,7 @@ namespace RPGBattle
             if (isDamage)
             {
                 float damageAmount = LoadEventConfigFromFile("damage_amount", player);
-                player.TakeDamage((int)damageAmount);
+                player.TakeDamage((int)damageAmount, true);
             }
         }
 

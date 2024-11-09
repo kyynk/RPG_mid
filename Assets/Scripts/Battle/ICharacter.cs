@@ -12,6 +12,6 @@ namespace RPGBattle
         void ResetStatus();
         void Attack(bool isCritical);
         void Heal(int amount);
-        void TakeDamage(int amount);
+        void TakeDamage(int amount, bool isEventDamage);
     }
 }

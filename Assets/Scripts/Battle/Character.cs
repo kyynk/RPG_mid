@@ -14,6 +14,7 @@ namespace RPGBattle
 
         private Animator characterAnimator;
         private Animator healAnimator;
+        private Animator boomAnimator;
 
         public Character(string _name)
         {
@@ -30,6 +31,12 @@ namespace RPGBattle
                 Debug.LogError($"GameObject for {Name}Heal not found!");
             }
             healAnimator = gameObject.GetComponent<Animator>();
+            gameObject = GameObject.FindGameObjectWithTag(Name + "Boom");
+            if (gameObject == null)
+            {
+                Debug.LogError($"GameObject for {Name}Boom not found!");
+            }
+            boomAnimator = gameObject.GetComponent<Animator>();
             ResetStatus();
         }
 
@@ -39,6 +46,8 @@ namespace RPGBattle
             ATK = LoadValueFromFile("atk");
             IsDefend = false;
             characterAnimator.Play("idle");
+            healAnimator.Play("hidden");
+            boomAnimator.Play("hidden");
         }
 
         public void Attack(bool isCritical)
@@ -59,8 +68,12 @@ namespace RPGBattle
             HP += amount;
         }
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int amount, bool isEventDamage)
         {
+            if (isEventDamage)
+            {
+                boomAnimator.Play("boom");
+            }
             characterAnimator.Play("injure");
 
             if (IsDefend)

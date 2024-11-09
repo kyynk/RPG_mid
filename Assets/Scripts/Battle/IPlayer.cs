@@ -8,8 +8,7 @@ namespace RPGBattle
         void Attack(IPlayer enemy, bool isCritical);
         void Defend();
         void Heal(int amount);
-        void TakeDamage(int amount);
-        // Is character HP <= 0
+        void TakeDamage(int amount, bool isEventDamage);
         bool IsCharacterDead();
     }
 }
