@@ -156,11 +156,18 @@ namespace RPGBattle
             else
             {
                 UpdateTurnText();
+                playerTurn = (playerTurn + 1) % 2;
+                UpdateTurnImg();
+                UpdateDebugInfo();
+                TriggerRandomEvent();
             }
+        }
 
-            playerTurn = (playerTurn + 1) % 2;
-            UpdateTurnImg();
-            UpdateDebugInfo();
+        private void TriggerRandomEvent()
+        {
+            IPlayer currentPlayer = players[playerTurn];
+            eventHandler.OnPlayerHeal(currentPlayer);
+            eventHandler.OnPlayerTakeDamage(currentPlayer);
         }
 
         private bool IsNewMatch()

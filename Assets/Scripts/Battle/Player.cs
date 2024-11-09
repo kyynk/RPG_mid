@@ -36,6 +36,7 @@ namespace RPGBattle
 
         public void Attack(IPlayer enemy, bool isCritical)
         {
+            Character.Attack(isCritical);
             int damage = isCritical ? Character.ATK * 2 : Character.ATK;
             enemy.TakeDamage(damage);
         }

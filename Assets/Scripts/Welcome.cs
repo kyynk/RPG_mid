@@ -149,7 +149,7 @@ namespace RPGBattle
 
         private void RandomFirst()
         {
-            if (UnityEngine.Random.Range(0, 2) == 0)
+            if (Random.Range(0, 2) == 0)
             {
                 PlayerAFirst();
             }

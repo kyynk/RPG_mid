@@ -12,13 +12,24 @@ namespace RPGBattle
 
         public string Name { get; }
 
-        private float critRate;
-        private float healRate;
-        private int healAmount;
+        private Animator characterAnimator;
+        private Animator healAnimator;
 
         public Character(string _name)
         {
             Name = _name;
+            GameObject gameObject = GameObject.FindGameObjectWithTag(Name);
+            if (gameObject == null)
+            {
+                Debug.LogError($"GameObject for {Name} not found!");
+            }
+            characterAnimator = gameObject.GetComponent<Animator>();
+            gameObject = GameObject.FindGameObjectWithTag(Name + "Heal");
+            if (gameObject == null)
+            {
+                Debug.LogError($"GameObject for {Name}Heal not found!");
+            }
+            healAnimator = gameObject.GetComponent<Animator>();
             ResetStatus();
         }
 
@@ -27,12 +38,46 @@ namespace RPGBattle
             HP = LoadValueFromFile("hp");
             ATK = LoadValueFromFile("atk");
             IsDefend = false;
+            characterAnimator.Play("idle");
+        }
+
+        public void Attack(bool isCritical)
+        {
+            if (isCritical)
+            {
+                characterAnimator.Play("crit_attack");
+            }
+            else
+            {
+                characterAnimator.Play("attack");
+            }
+        }
+
+        public void Heal(int amount)
+        {
+            healAnimator.Play("heal");
+            HP += amount;
+        }
+
+        public void TakeDamage(int amount)
+        {
+            characterAnimator.Play("injure");
+
+            if (IsDefend)
+            {
+                HP -= amount / 2;
+                IsDefend = false;
+            }
+            else
+            {
+                HP -= amount;
+            }
         }
 
         private int LoadValueFromFile(string fileName)
         {
             string filePath = Path.Combine(Application.dataPath, "ConfigForGame", "PlayerConfig", fileName + ".csv");
-            
+
             if (!File.Exists(filePath))
             {
                 Debug.LogError($"File {fileName} not found!");
@@ -64,7 +109,7 @@ namespace RPGBattle
             return ReturnDefaultValue(fileName);
         }
 
-        public int ReturnDefaultValue(string type)
+        private int ReturnDefaultValue(string type)
         {
             if (type == "atk")
             {
@@ -73,24 +118,6 @@ namespace RPGBattle
             else
             {
                 return 100;
-            }
-        }
-
-        public void Heal(int amount)
-        {
-            HP += amount;
-        }
-
-        public void TakeDamage(int amount)
-        {
-            if (IsDefend)
-            {
-                HP -= amount / 2;
-                IsDefend = false;
-            }
-            else
-            {
-                HP -= amount;
             }
         }
     }

@@ -6,13 +6,24 @@ namespace RPGBattle
 {
     public class EventHandler
     {
+        private System.Random random; // using System.Random, since Unity's Random not random enough
         private bool isCritical;
         private bool isHeal;
+        private bool isDamage;
 
         public EventHandler()
         {
+            random = new System.Random();
             isCritical = false;
             isHeal = false;
+            isDamage = false;
+        }
+
+        public void OnPlayerAttack(IPlayer player, IPlayer enemy)
+        {
+            float critRate = LoadEventConfigFromFile("crit_rate", player);
+            isCritical = random.NextDouble() < critRate;
+            player.Attack(enemy, isCritical);
         }
 
         public float LoadEventConfigFromFile(string fileName, IPlayer player)
@@ -48,13 +59,6 @@ namespace RPGBattle
             return 0;
         }
 
-        public void OnPlayerAttack(IPlayer player, IPlayer enemy)
-        {
-            float critRate = LoadEventConfigFromFile("crit_rate", player);
-            isCritical = UnityEngine.Random.value < critRate;
-            player.Attack(enemy, isCritical);
-        }
-
         public void OnPlayerDefend(IPlayer player)
         {
             player.Defend();
@@ -63,7 +67,7 @@ namespace RPGBattle
         public void OnPlayerHeal(IPlayer player)
         {
             float healRate = LoadEventConfigFromFile("heal_rate", player);
-            isHeal = UnityEngine.Random.value < healRate;
+            isHeal = random.NextDouble() < healRate;
             if (isHeal)
             {
                 float healAmount = LoadEventConfigFromFile("heal_amount", player);
@@ -71,11 +75,15 @@ namespace RPGBattle
             }
         }
 
-        // when player take damage, the amount is random between 5 and 10 (random events)
         public void OnPlayerTakeDamage(IPlayer player)
         {
-            int amount = UnityEngine.Random.Range(5, 10);
-            player.TakeDamage(amount);
+            float damageRate = LoadEventConfigFromFile("damage_rate", player);
+            isDamage = random.NextDouble() < damageRate;
+            if (isDamage)
+            {
+                float damageAmount = LoadEventConfigFromFile("damage_amount", player);
+                player.TakeDamage((int)damageAmount);
+            }
         }
     }
 }

@@ -11,6 +11,10 @@ TagManager:
   - MatchResult
   - R_Shield
   - L_Shield
+  - Paladin
+  - Giant
+  - PaladinHeal
+  - GiantHeal
   layers:
   - Default
   - TransparentFX

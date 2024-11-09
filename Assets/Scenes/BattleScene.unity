@@ -1690,7 +1690,7 @@ GameObject:
   - component: {fileID: 788912757}
   m_Layer: 0
   m_Name: Paladin
-  m_TagString: Untagged
+  m_TagString: Paladin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3477,7 +3477,7 @@ GameObject:
   - component: {fileID: 1954080160}
   m_Layer: 0
   m_Name: Giant
-  m_TagString: Untagged
+  m_TagString: Giant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

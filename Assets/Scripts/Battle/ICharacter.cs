@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace RPGBattle
 {
     public interface ICharacter
@@ -8,6 +10,7 @@ namespace RPGBattle
         string Name { get; }
 
         void ResetStatus();
+        void Attack(bool isCritical);
         void Heal(int amount);
         void TakeDamage(int amount);
     }
