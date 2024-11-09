@@ -7,7 +7,6 @@ namespace RPGBattle
 {
     public class Welcome : MonoBehaviour
     {
-        public BattleSystem battleSystem;
         public GameObject hint;
         public GameObject whoFirst;
         public Button whoFirstButton;
@@ -21,6 +20,7 @@ namespace RPGBattle
         public GameObject selectIconB;
 
         private string filePath;
+        private bool isPlayerSelectionlocked;
 
         void Start()
         {
@@ -35,8 +35,45 @@ namespace RPGBattle
             playerBButton.onClick.AddListener(PlayerBFirst);
             randomButton.onClick.AddListener(RandomFirst);
             PlayerAFirst();
+            isPlayerSelectionlocked = true;
             hint.SetActive(false);
             whoFirst.SetActive(false);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetKeyDown("w"))
+            {
+                ShowWhoFirst();
+            }
+            else if (Input.GetKeyDown("h"))
+            {
+                ShowHint();
+            }
+            else if (Input.GetKeyDown("s"))
+            {
+                StartGame();
+            }
+            else if (Input.GetKeyDown("e"))
+            {
+                ExitGame();
+            }
+            else if (!isPlayerSelectionlocked)
+            {
+                if (Input.GetKeyDown("a"))
+                {
+                    PlayerAFirst();
+                }
+                else if (Input.GetKeyDown("b"))
+                {
+                    PlayerBFirst();
+                }
+                else if (Input.GetKeyDown("r"))
+                {
+                    RandomFirst();
+                }
+            }
         }
 
         public void ShowWhoFirst()
@@ -44,6 +81,7 @@ namespace RPGBattle
             Debug.Log("Show Who First");
             hint.SetActive(false);
             whoFirst.SetActive(true);
+            isPlayerSelectionlocked = false;
         }
 
         public void PlayerAFirst()
@@ -59,6 +97,7 @@ namespace RPGBattle
             selectIconB.SetActive(true);
             WriteSelectionToFile("Player B");
         }
+
         private void WriteSelectionToFile(string selection)
         {
             try
@@ -90,6 +129,7 @@ namespace RPGBattle
             Debug.Log("Show Hint");
             hint.SetActive(true);
             whoFirst.SetActive(false);
+            isPlayerSelectionlocked = true;
         }
 
         public void StartGame()

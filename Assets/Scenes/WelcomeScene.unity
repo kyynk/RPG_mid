@@ -3586,7 +3586,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bf36b3532aa7974e856150967d12c8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleSystem: {fileID: 0}
   hint: {fileID: 262132863}
   whoFirst: {fileID: 1988595813}
   whoFirstButton: {fileID: 1930516381}
