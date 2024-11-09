@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -12,21 +13,27 @@ namespace RPGBattle
         private int turnCount;
         private int[] playerPoint;
         private int firstPlayer;
+        private string whoFirstFilePath;
+        private string whoWinFilePath;
 
         // UI references
+        public GameObject playerATurn;
+        public GameObject playerBTurn;
         public GameObject turnInfoText;
         public GameObject matchInfoPanel; // MatchInfo panel
         public TMP_Text matchResultText; // Match result text
         public TMP_Text pointResultText; // Point result text
         public ButtonAction buttonAction;
 
-        void Start()
+        private void Start()
         {
             eventHandler = new EventHandler();
             players = new IPlayer[2];
             players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield");
             players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield");
             playerPoint = new int[2] { 0, 0 };
+            whoFirstFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt");
+            whoWinFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_win.txt");
             InitSomeSettings();
         }
 
@@ -38,19 +45,63 @@ namespace RPGBattle
             }
         }
 
-        public void InitSomeSettings()
+        private void InitSomeSettings()
         {
             turnCount = 1;
-            SetFirstPlayer(0);
+            SetFirstPlayer();
             matchInfoPanel.SetActive(false);
             turnInfoText.SetActive(true);
+            foreach (Player player in players)
+            {
+                player.ResetStatus();
+            }
             UpdateTurnText();
         }
 
-        public void SetFirstPlayer(int player)
+        private void SetFirstPlayer()
         {
-            firstPlayer = player;
-            playerTurn = player;
+            string firstPlayerName = GetFirstPlayer();
+            if (firstPlayerName == "Player A")
+            {
+                firstPlayer = 0;
+                playerTurn = 0;
+            }
+            else
+            {
+                firstPlayer = 1;
+                playerTurn = 1;
+            }
+            UpdateTurnImg();
+        }
+
+        private string GetFirstPlayer()
+        {
+            if (File.Exists(whoFirstFilePath))
+            {
+                return File.ReadAllText(whoFirstFilePath);
+            }
+            else
+            {
+                Debug.LogError("File not found!");
+                return "Player A";
+            }
+        }
+
+        private void UpdateTurnImg()
+        {
+            Debug.Log("Player " + playerTurn + " turn!");
+            if (playerTurn == 0)
+            {
+                Debug.Log("Player A turn!");
+                playerATurn.SetActive(true);
+                playerBTurn.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("Player B turn!");
+                playerATurn.SetActive(false);
+                playerBTurn.SetActive(true);
+            }
         }
 
         public void NextTurn(string action)
@@ -91,15 +142,16 @@ namespace RPGBattle
             }
 
             playerTurn = (playerTurn + 1) % 2;
+            UpdateTurnImg();
         }
 
-        public bool IsNewMatch()
+        private bool IsNewMatch()
         {
             // if 10 turn or one player hp <= 0, then the match is over
             return turnCount > 10 || players[0].IsCharacterDead() || players[1].IsCharacterDead();
         }
 
-        public void NewMatch()
+        private void NewMatch()
         {
             WhoWin();
             matchInfoPanel.SetActive(true);
@@ -107,7 +159,7 @@ namespace RPGBattle
             buttonAction.DisableFighterActionButtons();
         }
 
-        public void WhoWin()
+        private void WhoWin()
         {
             // has results: p1 win, p2 win, draw
             if (players[1].IsCharacterDead())
@@ -143,7 +195,7 @@ namespace RPGBattle
             }
         }
 
-        public bool IsGameOver()
+        private bool IsGameOver()
         {
             return Math.Abs(playerPoint[0] - playerPoint[1]) == 2;
         }
@@ -171,15 +223,8 @@ namespace RPGBattle
 
         public void ContinueToNextMatch()
         {
-            matchInfoPanel.SetActive(false); // Hide MatchInfo
-            turnInfoText.SetActive(true); // Show TurnInfo
             buttonAction.EnableFighterActionButtons(); // Re-enable buttons
-            turnCount = 1;
-            foreach (Player player in players)
-            {
-                player.ResetStatus();
-            }
-            UpdateTurnText();
+            InitSomeSettings();
         }
     }
 }
