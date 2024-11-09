@@ -111,14 +111,7 @@ namespace RPGBattle
 
         private int ReturnDefaultValue(string type)
         {
-            if (type == "atk")
-            {
-                return 10;
-            }
-            else
-            {
-                return 100;
-            }
+            return type == "atk" ? 10 : 100;
         }
     }
 }

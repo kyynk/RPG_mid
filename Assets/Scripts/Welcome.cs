@@ -138,8 +138,7 @@ namespace RPGBattle
         {
             try
             {
-                File.WriteAllText(filePath, selection); // Write selection to file
-                Debug.Log($"Selection '{selection}' written to {filePath}");
+                File.WriteAllText(filePath, selection);
             }
             catch (IOException ex)
             {

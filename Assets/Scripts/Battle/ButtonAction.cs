@@ -43,13 +43,11 @@ namespace RPGBattle
 
         public void Attack()
         {
-            Debug.Log("Attack triggered!");
             battleSystem.NextTurn("attack");
         }
 
         public void Defence()
         {
-            Debug.Log("Defence triggered!");
             battleSystem.NextTurn("defence");
         }
 
@@ -67,7 +65,7 @@ namespace RPGBattle
             continueButton.gameObject.SetActive(false); // Hide Continue button
         }
 
-        public void ContinueNextMatch()
+        private void ContinueNextMatch()
         {
             battleSystem.ContinueToNextMatch();
         }

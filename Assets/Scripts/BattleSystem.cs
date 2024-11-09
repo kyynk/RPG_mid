@@ -114,14 +114,35 @@ namespace RPGBattle
             }
         }
 
+        private void UpdateTurnText()
+        {
+            GameObject turnInfoText = GameObject.FindGameObjectWithTag("TurnInfo");
+            if (turnInfoText != null)
+            {
+                TMP_Text textComponent = turnInfoText.GetComponent<TMP_Text>();
+                if (textComponent != null)
+                {
+                    textComponent.text = "Round " + turnCount;
+                }
+                else
+                {
+                    Debug.LogError("Text component is missing on TurnText GameObject!");
+                }
+            }
+            else
+            {
+                Debug.LogError("TurnText UI element is not assigned in the Inspector!");
+            }
+        }
+
         private void UpdateDebugInfo()
         {
             Debug.Log(debugText.text);
             debugText.text = "State: " + (playerTurn == 0 ? "Player A" : "Player B") + "\n" +
-                             "Player A: HP=" + players[0].Character.HP +
+                             "Player A: \nHP=" + players[0].Character.HP +
                              ", ATK=" + players[0].Character.ATK +
                              ", DEFEND=" + (players[0].Character.IsDefend ? "true" : "false") + "\n" +
-                             "Player B: HP=" + players[1].Character.HP +
+                             "Player B: \nHP=" + players[1].Character.HP +
                              ", ATK=" + players[1].Character.ATK +
                              ", DEFEND=" + (players[1].Character.IsDefend ? "true" : "false");
         }
@@ -149,6 +170,7 @@ namespace RPGBattle
             {
                 turnCount++;
             }
+            UpdateDebugInfo(); // update debug info for player property
             if (IsNewMatch())
             {
                 NewMatch();
@@ -158,16 +180,9 @@ namespace RPGBattle
                 UpdateTurnText();
                 playerTurn = (playerTurn + 1) % 2;
                 UpdateTurnImg();
-                UpdateDebugInfo();
+                UpdateDebugInfo(); // update debug info for state
                 TriggerRandomEvent();
             }
-        }
-
-        private void TriggerRandomEvent()
-        {
-            IPlayer currentPlayer = players[playerTurn];
-            eventHandler.OnPlayerHeal(currentPlayer);
-            eventHandler.OnPlayerTakeDamage(currentPlayer);
         }
 
         private bool IsNewMatch()
@@ -204,6 +219,27 @@ namespace RPGBattle
             pointResultText.text = playerPoint[0] + " - " + playerPoint[1];
         }
 
+        private void TriggerRandomEvent()
+        {
+            IPlayer currentPlayer = players[playerTurn];
+            eventHandler.OnPlayerHeal(currentPlayer);
+            eventHandler.OnPlayerTakeDamage(currentPlayer);
+        }
+
+        public void ContinueToNextMatch()
+        {
+            buttonAction.EnableFighterActionButtons(); // Re-enable buttons
+            if (IsGameOver())
+            {
+                WriteWinnerToFile();
+                GoToFinishedScene();
+            }
+            else
+            {
+                InitSomeSettings();
+            }
+        }
+
         private bool IsGameOver()
         {
             return Math.Abs(playerPoint[0] - playerPoint[1]) == 2;
@@ -214,8 +250,7 @@ namespace RPGBattle
             try
             {
                 string winner = playerPoint[0] > playerPoint[1] ? "Player A" : "Player B";
-                File.WriteAllText(whoWinFilePath, winner); // Write selection to file
-                Debug.Log($"Winner '{winner}' written to {whoWinFilePath}");
+                File.WriteAllText(whoWinFilePath, winner);
             }
             catch (IOException ex)
             {
@@ -226,42 +261,6 @@ namespace RPGBattle
         private void GoToFinishedScene()
         {
             SceneManager.LoadScene("FinishedScene");
-        }
-
-        private void UpdateTurnText()
-        {
-            GameObject turnInfoText = GameObject.FindGameObjectWithTag("TurnInfo");
-            if (turnInfoText != null)
-            {
-                TMP_Text textComponent = turnInfoText.GetComponent<TMP_Text>();
-                if (textComponent != null)
-                {
-                    textComponent.text = "Round " + turnCount;
-                }
-                else
-                {
-                    Debug.LogError("Text component is missing on TurnText GameObject!");
-                }
-            }
-            else
-            {
-                Debug.LogError("TurnText UI element is not assigned in the Inspector!");
-            }
-        }
-
-        public void ContinueToNextMatch()
-        {
-            buttonAction.EnableFighterActionButtons(); // Re-enable buttons
-            if (IsGameOver())
-            {
-                Debug.Log("Game Over!");
-                WriteWinnerToFile();
-                GoToFinishedScene();
-            }
-            else
-            {
-                InitSomeSettings();
-            }
         }
     }
 }

@@ -26,7 +26,34 @@ namespace RPGBattle
             player.Attack(enemy, isCritical);
         }
 
-        public float LoadEventConfigFromFile(string fileName, IPlayer player)
+        public void OnPlayerDefend(IPlayer player)
+        {
+            player.Defend();
+        }
+
+        public void OnPlayerHeal(IPlayer player)
+        {
+            float healRate = LoadEventConfigFromFile("heal_rate", player);
+            isHeal = random.NextDouble() < healRate;
+            if (isHeal)
+            {
+                float healAmount = LoadEventConfigFromFile("heal_amount", player);
+                player.Heal((int)healAmount);
+            }
+        }
+
+        public void OnPlayerTakeDamage(IPlayer player)
+        {
+            float damageRate = LoadEventConfigFromFile("damage_rate", player);
+            isDamage = random.NextDouble() < damageRate;
+            if (isDamage)
+            {
+                float damageAmount = LoadEventConfigFromFile("damage_amount", player);
+                player.TakeDamage((int)damageAmount);
+            }
+        }
+
+        private float LoadEventConfigFromFile(string fileName, IPlayer player)
         {
             string filePath = Path.Combine(Application.dataPath, "ConfigForGame", "EventConfig", fileName + ".csv");
 
@@ -57,33 +84,6 @@ namespace RPGBattle
             }
             Debug.LogWarning($"Value for {player.Character.Name} not found in {fileName}.csv");
             return 0;
-        }
-
-        public void OnPlayerDefend(IPlayer player)
-        {
-            player.Defend();
-        }
-
-        public void OnPlayerHeal(IPlayer player)
-        {
-            float healRate = LoadEventConfigFromFile("heal_rate", player);
-            isHeal = random.NextDouble() < healRate;
-            if (isHeal)
-            {
-                float healAmount = LoadEventConfigFromFile("heal_amount", player);
-                player.Heal((int)healAmount);
-            }
-        }
-
-        public void OnPlayerTakeDamage(IPlayer player)
-        {
-            float damageRate = LoadEventConfigFromFile("damage_rate", player);
-            isDamage = random.NextDouble() < damageRate;
-            if (isDamage)
-            {
-                float damageAmount = LoadEventConfigFromFile("damage_amount", player);
-                player.TakeDamage((int)damageAmount);
-            }
         }
     }
 }
