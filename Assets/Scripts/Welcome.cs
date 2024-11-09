@@ -1,3 +1,4 @@
+using TMPro;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ namespace RPGBattle
         public Button randomButton;
         public GameObject selectIconA;
         public GameObject selectIconB;
+        public GameObject debugInfo;
+        public TMP_Text debugText;
 
         private string filePath;
         private bool isPlayerSelectionlocked;
@@ -38,6 +41,7 @@ namespace RPGBattle
             isPlayerSelectionlocked = true;
             hint.SetActive(false);
             whoFirst.SetActive(false);
+            debugInfo.SetActive(false);
         }
 
         // Update is called once per frame
@@ -59,6 +63,17 @@ namespace RPGBattle
             {
                 ExitGame();
             }
+            else if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (debugInfo.activeSelf)
+                {
+                    debugInfo.SetActive(false);
+                }
+                else
+                {
+                    debugInfo.SetActive(true);
+                }
+            }
             else if (!isPlayerSelectionlocked)
             {
                 if (Input.GetKeyDown("a"))
@@ -74,9 +89,30 @@ namespace RPGBattle
                     RandomFirst();
                 }
             }
+            UpdateDebugText();
         }
 
-        public void ShowWhoFirst()
+        private void UpdateDebugText()
+        {
+            debugText.text = "State: Welcome\n" +
+                             "Who First:\n" +
+                             GetFirstPlayer();
+        }
+
+        private string GetFirstPlayer()
+        {
+            if (File.Exists(filePath))
+            {
+                return File.ReadAllText(filePath);
+            }
+            else
+            {
+                Debug.LogError("File not found!");
+                return "Player A";
+            }
+        }
+
+        private void ShowWhoFirst()
         {
             Debug.Log("Show Who First");
             hint.SetActive(false);
@@ -84,14 +120,14 @@ namespace RPGBattle
             isPlayerSelectionlocked = false;
         }
 
-        public void PlayerAFirst()
+        private void PlayerAFirst()
         {
             selectIconA.SetActive(true);
             selectIconB.SetActive(false);
             WriteSelectionToFile("Player A");
         }
 
-        public void PlayerBFirst()
+        private void PlayerBFirst()
         {
             selectIconA.SetActive(false);
             selectIconB.SetActive(true);
@@ -111,7 +147,7 @@ namespace RPGBattle
             }
         }
 
-        public void RandomFirst()
+        private void RandomFirst()
         {
             if (UnityEngine.Random.Range(0, 2) == 0)
             {
@@ -124,23 +160,20 @@ namespace RPGBattle
 
         }
 
-        public void ShowHint()
+        private void ShowHint()
         {
-            Debug.Log("Show Hint");
             hint.SetActive(true);
             whoFirst.SetActive(false);
             isPlayerSelectionlocked = true;
         }
 
-        public void StartGame()
+        private void StartGame()
         {
-            Debug.Log("Game Started");
             SceneManager.LoadScene("BattleScene");
         }
 
-        public void ExitGame()
+        private void ExitGame()
         {
-            Debug.Log("Game Exited");
             Application.Quit();
         }
     }

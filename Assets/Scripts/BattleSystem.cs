@@ -1,7 +1,8 @@
+using TMPro;
 using System;
 using System.IO;
-using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace RPGBattle
 {
@@ -17,10 +18,12 @@ namespace RPGBattle
         private string whoWinFilePath;
 
         // UI references
+        public GameObject debugInfo;
         public GameObject playerATurn;
         public GameObject playerBTurn;
         public GameObject turnInfoText;
         public GameObject matchInfoPanel; // MatchInfo panel
+        public TMP_Text debugText;
         public TMP_Text matchResultText; // Match result text
         public TMP_Text pointResultText; // Point result text
         public ButtonAction buttonAction;
@@ -34,6 +37,7 @@ namespace RPGBattle
             playerPoint = new int[2] { 0, 0 };
             whoFirstFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt");
             whoWinFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_win.txt");
+            debugInfo.SetActive(false);
             InitSomeSettings();
         }
 
@@ -41,7 +45,15 @@ namespace RPGBattle
         {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                Debug.Log("Tab key pressed!");
+                if (debugInfo.activeSelf)
+                {
+                    debugInfo.SetActive(false);
+                }
+                else
+                {
+                    debugInfo.SetActive(true);
+                    UpdateDebugInfo();
+                }
             }
         }
 
@@ -56,6 +68,7 @@ namespace RPGBattle
                 player.ResetStatus();
             }
             UpdateTurnText();
+            UpdateDebugInfo();
         }
 
         private void SetFirstPlayer()
@@ -89,19 +102,28 @@ namespace RPGBattle
 
         private void UpdateTurnImg()
         {
-            Debug.Log("Player " + playerTurn + " turn!");
             if (playerTurn == 0)
             {
-                Debug.Log("Player A turn!");
                 playerATurn.SetActive(true);
                 playerBTurn.SetActive(false);
             }
             else
             {
-                Debug.Log("Player B turn!");
                 playerATurn.SetActive(false);
                 playerBTurn.SetActive(true);
             }
+        }
+
+        private void UpdateDebugInfo()
+        {
+            Debug.Log(debugText.text);
+            debugText.text = "State: " + (playerTurn == 0 ? "Player A" : "Player B") + "\n" +
+                             "Player A: HP=" + players[0].Character.HP +
+                             ", ATK=" + players[0].Character.ATK +
+                             ", DEFEND=" + (players[0].Character.IsDefend ? "true" : "false") + "\n" +
+                             "Player B: HP=" + players[1].Character.HP +
+                             ", ATK=" + players[1].Character.ATK +
+                             ", DEFEND=" + (players[1].Character.IsDefend ? "true" : "false");
         }
 
         public void NextTurn(string action)
@@ -112,21 +134,16 @@ namespace RPGBattle
 
             if (action == "attack")
             {
-                Debug.Log("Player " + playerTurn + " attack!");
                 eventHandler.OnPlayerAttack(currentPlayer, opponent);
             }
             else if (action == "defence")
             {
-                Debug.Log("Player " + playerTurn + " defence!");
                 eventHandler.OnPlayerDefend(currentPlayer);
             }
             else
             {
-                Debug.Log("Invalid action!");
+                Debug.LogError("Invalid action!");
             }
-
-            Debug.Log("Player 0" + " HP: " + players[0].Character.HP);
-            Debug.Log("Player 1" + " HP: " + players[1].Character.HP);
 
             if (firstPlayer != playerTurn)
             {
@@ -143,6 +160,7 @@ namespace RPGBattle
 
             playerTurn = (playerTurn + 1) % 2;
             UpdateTurnImg();
+            UpdateDebugInfo();
         }
 
         private bool IsNewMatch()
@@ -164,40 +182,43 @@ namespace RPGBattle
             // has results: p1 win, p2 win, draw
             if (players[1].IsCharacterDead())
             {
-                Debug.Log("Player 0 win!");
                 matchResultText.text = "Player A Win";
                 playerPoint[0]++;
             }
             else if (players[0].IsCharacterDead())
             {
-                Debug.Log("Player 1 win!");
                 matchResultText.text = "Player B Win";
                 playerPoint[1]++;
             }
             else
             {
-                Debug.Log("Draw!");
                 matchResultText.text = "Draw";
             }
             pointResultText.text = playerPoint[0] + " - " + playerPoint[1];
-            if (IsGameOver())
-            {
-                Debug.Log("Game Over!");
-                if (playerPoint[0] > playerPoint[1])
-                {
-                    Debug.Log("Player 0 win the game!");
-                }
-                else
-                {
-                    Debug.Log("Player 1 win the game!");
-
-                }
-            }
         }
 
         private bool IsGameOver()
         {
             return Math.Abs(playerPoint[0] - playerPoint[1]) == 2;
+        }
+
+        private void WriteWinnerToFile()
+        {
+            try
+            {
+                string winner = playerPoint[0] > playerPoint[1] ? "Player A" : "Player B";
+                File.WriteAllText(whoWinFilePath, winner); // Write selection to file
+                Debug.Log($"Winner '{winner}' written to {whoWinFilePath}");
+            }
+            catch (IOException ex)
+            {
+                Debug.LogError($"Failed to write to file: {ex.Message}");
+            }
+        }
+
+        private void GoToFinishedScene()
+        {
+            SceneManager.LoadScene("FinishedScene");
         }
 
         private void UpdateTurnText()
@@ -224,7 +245,16 @@ namespace RPGBattle
         public void ContinueToNextMatch()
         {
             buttonAction.EnableFighterActionButtons(); // Re-enable buttons
-            InitSomeSettings();
+            if (IsGameOver())
+            {
+                Debug.Log("Game Over!");
+                WriteWinnerToFile();
+                GoToFinishedScene();
+            }
+            else
+            {
+                InitSomeSettings();
+            }
         }
     }
 }
