@@ -9,6 +9,7 @@ namespace RPGBattle
     public class BattleSystem : MonoBehaviour
     {
         private EventHandler eventHandler;
+        private CoroutineRunner coroutineRunner;
         private IPlayer[] players;
         private int playerTurn; // 0 or 1 (player 1 or player 2)
         private int turnCount;
@@ -30,10 +31,12 @@ namespace RPGBattle
 
         private void Start()
         {
+            GameObject runnerObject = new GameObject("CoroutineRunner");
+            coroutineRunner = runnerObject.AddComponent<CoroutineRunner>();
             eventHandler = new EventHandler();
             players = new IPlayer[2];
-            players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield");
-            players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield");
+            players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield", coroutineRunner);
+            players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield", coroutineRunner);
             playerPoint = new int[2] { 0, 0 };
             whoFirstFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt");
             whoWinFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_win.txt");

@@ -1,4 +1,4 @@
-using UnityEngine;
+using System.Collections;
 
 namespace RPGBattle
 {
@@ -10,8 +10,8 @@ namespace RPGBattle
         string Name { get; }
 
         void ResetStatus();
-        void Attack(bool isCritical);
-        void Heal(int amount);
-        void TakeDamage(int amount, bool isEventDamage);
+        IEnumerator Attack(bool isCritical);
+        IEnumerator Heal(int amount);
+        IEnumerator TakeDamage(int amount, bool isEventDamage);
     }
 }

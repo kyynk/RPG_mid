@@ -5,10 +5,11 @@ namespace RPGBattle
     public class Player : IPlayer
     {
         public Character Character {  get; set; }
+        private CoroutineRunner coroutineRunner;
         private HealthBar healthBar;
         private GameObject shieldImg;
 
-        public Player(Character _character, string playerHealthBar, string playerShield)
+        public Player(Character _character, string playerHealthBar, string playerShield, CoroutineRunner _coroutineRunner)
         {
             Character = _character;
             GameObject healthBarImg = GameObject.FindGameObjectWithTag(playerHealthBar);
@@ -25,6 +26,7 @@ namespace RPGBattle
             shieldImg.SetActive(Character.IsDefend);
             healthBar = new HealthBar(healthBarImg.GetComponent<UnityEngine.UI.Image>());
             healthBar.SetMaxHealth(Character.HP);
+            coroutineRunner = _coroutineRunner;
         }
 
         public void ResetStatus()
@@ -36,7 +38,7 @@ namespace RPGBattle
 
         public void Attack(IPlayer enemy, bool isCritical)
         {
-            Character.Attack(isCritical);
+            coroutineRunner.StartAttackCoroutine(Character, isCritical);
             int damage = isCritical ? Character.ATK * 2 : Character.ATK;
             enemy.TakeDamage(damage, false);
         }
@@ -49,13 +51,13 @@ namespace RPGBattle
 
         public void Heal(int amount)
         {
-            Character.Heal(amount);
+            coroutineRunner.StartHealCoroutine(Character, amount);
             healthBar.SetHealth(Character.HP);
         }
 
         public void TakeDamage(int amount, bool isEventDamage)
         {
-            Character.TakeDamage(amount, isEventDamage);
+            coroutineRunner.StartTakeDamageCoroutine(Character, amount, isEventDamage);
             shieldImg.SetActive(Character.IsDefend);
             if (Character.HP < 0)
             {

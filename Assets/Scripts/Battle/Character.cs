@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 
@@ -50,7 +51,7 @@ namespace RPGBattle
             boomAnimator.Play("hidden");
         }
 
-        public void Attack(bool isCritical)
+        public IEnumerator Attack(bool isCritical)
         {
             if (isCritical)
             {
@@ -60,15 +61,21 @@ namespace RPGBattle
             {
                 characterAnimator.Play("attack");
             }
+            while (characterAnimator.GetCurrentAnimatorStateInfo(0).IsName("attack") &&
+                   characterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.6f)
+            {
+                yield return null;  // Wait until the next frame
+            }
         }
 
-        public void Heal(int amount)
+        public IEnumerator Heal(int amount)
         {
             healAnimator.Play("heal");
             HP += amount;
+            yield return new WaitForSeconds(characterAnimator.GetCurrentAnimatorStateInfo(0).length);
         }
 
-        public void TakeDamage(int amount, bool isEventDamage)
+        public IEnumerator TakeDamage(int amount, bool isEventDamage)
         {
             if (isEventDamage)
             {
@@ -84,6 +91,12 @@ namespace RPGBattle
             else
             {
                 HP -= amount;
+            }
+
+            while (characterAnimator.GetCurrentAnimatorStateInfo(0).IsName("injure") &&
+                   characterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            {
+                yield return null;
             }
         }
 
