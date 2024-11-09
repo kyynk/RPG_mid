@@ -24,10 +24,18 @@ namespace RPGBattle
         {
             eventHandler = new EventHandler();
             players = new IPlayer[2];
-            players[0] = new Player(new Character("Giant"), "L_HP");
-            players[1] = new Player(new Character("Paladin"), "R_HP");
+            players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield");
+            players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield");
             playerPoint = new int[2] { 0, 0 };
             InitSomeSettings();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                Debug.Log("Tab key pressed!");
+            }
         }
 
         public void InitSomeSettings()

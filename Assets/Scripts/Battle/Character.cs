@@ -25,7 +25,6 @@ namespace RPGBattle
 
         public void ResetStatus()
         {
-            // HP and ATK values should be read from a file
             HP = LoadValueFromFile("hp");
             ATK = LoadValueFromFile("atk");
             IsDefend = false;

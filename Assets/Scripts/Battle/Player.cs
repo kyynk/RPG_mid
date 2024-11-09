@@ -6,8 +6,9 @@ namespace RPGBattle
     {
         public Character Character {  get; set; }
         private HealthBar healthBar;
+        private GameObject shieldImg;
 
-        public Player(Character _character, string playerHealthBar)
+        public Player(Character _character, string playerHealthBar, string playerShield)
         {
             Character = _character;
             GameObject healthBarImg = GameObject.FindGameObjectWithTag(playerHealthBar);
@@ -15,6 +16,13 @@ namespace RPGBattle
             {
                 Debug.LogError($"Health bar image for {playerHealthBar} not found!");
             }
+            GameObject defendImg = GameObject.FindGameObjectWithTag(playerShield);
+            if (defendImg == null)
+            {
+                Debug.LogError($"Defend image for {playerShield} not found!");
+            }
+            shieldImg = defendImg;
+            shieldImg.SetActive(Character.IsDefend);
             healthBar = new HealthBar(healthBarImg.GetComponent<UnityEngine.UI.Image>());
             healthBar.SetMaxHealth(Character.HP);
         }
@@ -23,6 +31,7 @@ namespace RPGBattle
         {
             Character.ResetStatus();
             healthBar.SetHealth(Character.HP);
+            shieldImg.SetActive(Character.IsDefend);
         }
 
         public void Attack(IPlayer enemy, bool isCritical)
@@ -34,6 +43,7 @@ namespace RPGBattle
         public void Defend()
         {
             Character.IsDefend = true;
+            shieldImg.SetActive(Character.IsDefend);
         }
 
         public void Heal(int amount)
@@ -45,6 +55,7 @@ namespace RPGBattle
         public void TakeDamage(int amount)
         {
             Character.TakeDamage(amount);
+            shieldImg.SetActive(Character.IsDefend);
             if (Character.HP < 0)
             {
                 Character.HP = 0;

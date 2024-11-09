@@ -9,6 +9,8 @@ TagManager:
   - TurnInfo
   - PointResult
   - MatchResult
+  - R_Shield
+  - L_Shield
   layers:
   - Default
   - TransparentFX
