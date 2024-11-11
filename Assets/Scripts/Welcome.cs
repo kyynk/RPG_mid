@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,10 +25,12 @@ namespace RPGBattle
 
         private string filePath;
         private bool isPlayerSelectionlocked;
+        private System.Random random;
 
         void Start()
         {
             filePath = Path.Combine(Application.streamingAssetsPath, "who_first.txt"); // Set file path
+            random = new System.Random();
 
             whoFirstButton.onClick.AddListener(ShowWhoFirst);
             hintButton.onClick.AddListener(ShowHint);
@@ -76,18 +79,7 @@ namespace RPGBattle
             }
             else if (!isPlayerSelectionlocked)
             {
-                if (Input.GetKeyDown("a"))
-                {
-                    PlayerAFirst();
-                }
-                else if (Input.GetKeyDown("b"))
-                {
-                    PlayerBFirst();
-                }
-                else if (Input.GetKeyDown("r"))
-                {
-                    RandomFirst();
-                }
+                GetWhoFirstSelectionKeyDown();
             }
             UpdateDebugText();
         }
@@ -119,6 +111,22 @@ namespace RPGBattle
             isPlayerSelectionlocked = false;
         }
 
+        private void GetWhoFirstSelectionKeyDown()
+        {
+            if (Input.GetKeyDown("a"))
+            {
+                PlayerAFirst();
+            }
+            else if (Input.GetKeyDown("b"))
+            {
+                PlayerBFirst();
+            }
+            else if (Input.GetKeyDown("r"))
+            {
+                RandomFirst();
+            }
+        }
+
         private void PlayerAFirst()
         {
             selectIconA.SetActive(true);
@@ -147,7 +155,7 @@ namespace RPGBattle
 
         private void RandomFirst()
         {
-            if (Random.Range(0, 2) == 0)
+            if (random.Next(0, 2) == 0)
             {
                 PlayerAFirst();
             }
@@ -155,7 +163,6 @@ namespace RPGBattle
             {
                 PlayerBFirst();
             }
-
         }
 
         private void ShowHint()
