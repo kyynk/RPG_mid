@@ -42,12 +42,12 @@ namespace RPGBattle
             }
         }
 
-        public IEnumerator Attack()
+        private IEnumerator Attack()
         {
             yield return battleSystem.NextTurn("attack");
         }
 
-        public IEnumerator Defend()
+        private IEnumerator Defend()
         {
             yield return battleSystem.NextTurn("defend");
         }
