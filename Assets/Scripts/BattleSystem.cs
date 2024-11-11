@@ -176,8 +176,8 @@ namespace RPGBattle
                 UpdateTurnText();
                 playerTurn = (playerTurn + 1) % 2;
                 UpdateTurnImg();
-                yield return TriggerRandomEvent();
                 UpdateDebugInfo(); // update debug info for state
+                yield return TriggerRandomEvent();
                 buttonAction.EnableFighterActionButtons();
             }
         }
@@ -221,7 +221,9 @@ namespace RPGBattle
         {
             Player currentPlayer = players[playerTurn];
             yield return eventHandler.OnPlayerHeal(currentPlayer);
+            UpdateDebugInfo(); // update debug info for player property (hp)
             yield return eventHandler.OnPlayerTakeEventDamage(currentPlayer);
+            UpdateDebugInfo(); // update debug info for player property (hp)
         }
 
         public void ContinueToNextMatch()
