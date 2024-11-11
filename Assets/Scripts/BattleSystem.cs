@@ -178,7 +178,14 @@ namespace RPGBattle
                 UpdateTurnImg();
                 UpdateDebugInfo(); // update debug info for state
                 yield return TriggerRandomEvent();
-                buttonAction.EnableFighterActionButtons();
+                if (IsNewMatch()) // since maybe the random event cause the match over
+                {
+                    NewMatch();
+                }
+                else
+                {
+                    buttonAction.EnableFighterActionButtons();
+                }
             }
         }
 
