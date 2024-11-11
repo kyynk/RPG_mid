@@ -149,19 +149,7 @@ namespace RPGBattle
             Player currentPlayer = players[playerTurn];
             Player opponent = players[(playerTurn + 1) % 2];
             buttonAction.DisableFighterActionButtons();
-            if (action == "attack")
-            {
-                yield return eventHandler.OnPlayerAttack(currentPlayer, opponent);
-            }
-            else if (action == "defend")
-            {
-                yield return eventHandler.OnPlayerDefend(currentPlayer);
-            }
-            else
-            {
-                Debug.LogError("Invalid action!");
-            }
-
+            yield return HandlePlayerAction(action, currentPlayer, opponent);
             if (firstPlayer != playerTurn)
             {
                 turnCount++;
@@ -173,19 +161,23 @@ namespace RPGBattle
             }
             else
             {
-                UpdateTurnText();
-                playerTurn = (playerTurn + 1) % 2;
-                UpdateTurnImg();
-                UpdateDebugInfo(); // update debug info for state
-                yield return TriggerRandomEvent();
-                if (IsNewMatch()) // since maybe the random event cause the match over
-                {
-                    NewMatch();
-                }
-                else
-                {
-                    buttonAction.EnableFighterActionButtons();
-                }
+                yield return HandleTurnTransition();
+            }
+        }
+
+        private IEnumerator HandlePlayerAction(string action, Player currentPlayer, Player opponent)
+        {
+            if (action == "attack")
+            {
+                yield return eventHandler.OnPlayerAttack(currentPlayer, opponent);
+            }
+            else if (action == "defend")
+            {
+                yield return eventHandler.OnPlayerDefend(currentPlayer);
+            }
+            else
+            {
+                Debug.LogError("Invalid action!");
             }
         }
 
@@ -222,6 +214,23 @@ namespace RPGBattle
                 matchResultText.text = "Draw";
             }
             pointResultText.text = playerPoint[0] + " - " + playerPoint[1];
+        }
+
+        private IEnumerator HandleTurnTransition()
+        {
+            UpdateTurnText();
+            playerTurn = (playerTurn + 1) % 2;
+            UpdateTurnImg();
+            UpdateDebugInfo(); // update debug info for state
+            yield return TriggerRandomEvent();
+            if (IsNewMatch()) // since maybe the random event cause the match over
+            {
+                NewMatch();
+            }
+            else
+            {
+                buttonAction.EnableFighterActionButtons();
+            }
         }
 
         private IEnumerator TriggerRandomEvent()
