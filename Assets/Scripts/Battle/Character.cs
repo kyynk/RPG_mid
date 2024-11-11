@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.IO;
+using System.Collections;
 using UnityEngine;
 
 namespace RPGBattle
@@ -13,6 +13,8 @@ namespace RPGBattle
 
         public string Name { get; }
 
+        private int defaultHp;
+        private int defaultAtk;
         private Animator characterAnimator;
         private Animator healAnimator;
         private Animator boomAnimator;
@@ -38,13 +40,20 @@ namespace RPGBattle
                 Debug.LogError($"GameObject for {Name}Boom not found!");
             }
             boomAnimator = gameObject.GetComponent<Animator>();
+            SetDefaultValues();
             ResetStatus();
+        }
+
+        private void SetDefaultValues()
+        {
+            defaultHp = LoadValueFromFile("hp");
+            defaultAtk = LoadValueFromFile("atk");
         }
 
         public void ResetStatus()
         {
-            HP = LoadValueFromFile("hp");
-            ATK = LoadValueFromFile("atk");
+            HP = defaultHp;
+            ATK = defaultAtk;
             IsDefend = false;
             characterAnimator.Play("idle");
             healAnimator.Play("hidden");
@@ -61,18 +70,14 @@ namespace RPGBattle
             {
                 characterAnimator.Play("attack");
             }
-            while (characterAnimator.GetCurrentAnimatorStateInfo(0).IsName("attack") &&
-                   characterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.6f)
-            {
-                yield return null;  // Wait until the next frame
-            }
+            yield return new WaitForSeconds(characterAnimator.GetCurrentAnimatorStateInfo(0).length);
         }
 
         public IEnumerator Heal(int amount)
         {
             healAnimator.Play("heal");
             HP += amount;
-            yield return new WaitForSeconds(characterAnimator.GetCurrentAnimatorStateInfo(0).length);
+            yield return new WaitForSeconds(healAnimator.GetCurrentAnimatorStateInfo(0).length);
         }
 
         public IEnumerator TakeDamage(int amount, bool isEventDamage)
@@ -80,8 +85,8 @@ namespace RPGBattle
             if (isEventDamage)
             {
                 boomAnimator.Play("boom");
+                yield return new WaitForSeconds(boomAnimator.GetCurrentAnimatorStateInfo(0).length);
             }
-            characterAnimator.Play("injure");
 
             if (IsDefend)
             {
@@ -93,11 +98,13 @@ namespace RPGBattle
                 HP -= amount;
             }
 
-            while (characterAnimator.GetCurrentAnimatorStateInfo(0).IsName("injure") &&
-                   characterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-            {
-                yield return null;
-            }
+            characterAnimator.Play("injure");
+            yield return new WaitForSeconds(characterAnimator.GetCurrentAnimatorStateInfo(0).length);
+        }
+
+        public int GetMaxHp()
+        {
+            return defaultHp;
         }
 
         private int LoadValueFromFile(string fileName)

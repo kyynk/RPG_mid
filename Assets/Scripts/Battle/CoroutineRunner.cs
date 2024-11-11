@@ -1,22 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 namespace RPGBattle
 {
     public class CoroutineRunner : MonoBehaviour
     {
-        public void StartAttackCoroutine(Character character, bool isCritical)
+        public IEnumerator StartAttackCoroutine(Character character, bool isCritical)
         {
-            StartCoroutine(character.Attack(isCritical));
+            yield return StartCoroutine(character.Attack(isCritical));
         }
 
-        public void StartHealCoroutine(Character character, int amount)
+        public IEnumerator StartHealCoroutine(Character character, int amount)
         {
-            StartCoroutine(character.Heal(amount));
+            yield return StartCoroutine(character.Heal(amount));
         }
 
-        public void StartTakeDamageCoroutine(Character character, int amount, bool isEventDamage)
+        public IEnumerator StartTakeDamageCoroutine(Character character, int amount, bool isEventDamage)
         {
-            StartCoroutine(character.TakeDamage(amount, isEventDamage));
+            yield return StartCoroutine(character.TakeDamage(amount, isEventDamage));
         }
     }
 }

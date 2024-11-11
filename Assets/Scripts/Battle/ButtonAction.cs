@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,8 +14,8 @@ namespace RPGBattle
         void Start()
         {
             // Add listener for mouse clicks
-            attackButton.onClick.AddListener(Attack);
-            defendButton.onClick.AddListener(Defend);
+            attackButton.onClick.AddListener(() => StartCoroutine(Attack()));
+            defendButton.onClick.AddListener(() => StartCoroutine(Defend()));
             continueButton.onClick.AddListener(ContinueNextMatch);
 
             // Initially disable ContinueButton
@@ -28,11 +29,11 @@ namespace RPGBattle
             {
                 if (Input.GetKeyDown("a"))
                 {
-                    Attack();
+                    StartCoroutine(Attack());
                 }
                 else if (Input.GetKeyDown("d"))
                 {
-                    Defend();
+                    StartCoroutine(Defend());
                 }
             }
             else if (Input.GetKeyDown("c"))
@@ -41,27 +42,35 @@ namespace RPGBattle
             }
         }
 
-        public void Attack()
+        public IEnumerator Attack()
         {
-            battleSystem.NextTurn("attack");
+            yield return battleSystem.NextTurn("attack");
         }
 
-        public void Defend()
+        public IEnumerator Defend()
         {
-            battleSystem.NextTurn("defend");
+            yield return battleSystem.NextTurn("defend");
         }
 
         public void DisableFighterActionButtons()
         {
             attackButton.interactable = false;
             defendButton.interactable = false;
-            continueButton.gameObject.SetActive(true); // Show Continue button
         }
 
         public void EnableFighterActionButtons()
         {
             attackButton.interactable = true;
             defendButton.interactable = true;
+        }
+
+        public void EnableContinueButton()
+        {
+            continueButton.gameObject.SetActive(true); // Show Continue button
+        }
+
+        public void DisableContinueButton()
+        {
             continueButton.gameObject.SetActive(false); // Hide Continue button
         }
 

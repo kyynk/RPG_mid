@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPGBattle
@@ -10,39 +12,57 @@ namespace RPGBattle
         private bool isCritical;
         private bool isHeal;
         private bool isDamage;
+        private List<string> characterNames;
+        private List<List<float>> eventData;
 
-        public EventHandler()
+        public EventHandler(List<string> _characterNames)
         {
             random = new System.Random();
             isCritical = false;
             isHeal = false;
             isDamage = false;
+            eventData = new List<List<float>>();
+            characterNames = new List<string>(_characterNames);
+            foreach (var name in characterNames)
+            {
+                eventData.Add(new List<float>
+                {
+                    LoadEventConfigFromFile("crit_rate", name),
+                    LoadEventConfigFromFile("heal_rate", name),
+                    LoadEventConfigFromFile("heal_amount", name),
+                    LoadEventConfigFromFile("damage_rate", name),
+                    LoadEventConfigFromFile("damage_amount", name)
+                });
+            }
         }
 
-        public void OnPlayerAttack(Player player, Player enemy)
+        public IEnumerator OnPlayerAttack(Player player, Player enemy)
         {
-            float critRate = LoadEventConfigFromFile("crit_rate", player);
-            isCritical = random.NextDouble() < critRate;
-            player.Attack(enemy, isCritical);
+            int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
+            //Debug.Log("Player " + characterNames[whichPlayer] + " attacks!");
+            isCritical = random.NextDouble() < eventData[whichPlayer][0];
+            //Debug.Log("eventData " + eventData[whichPlayer][0] + " " + eventData[whichPlayer][1] + " " + eventData[whichPlayer][2] + " " + eventData[whichPlayer][3] + " " + eventData[whichPlayer][4]);
+            yield return player.Attack(enemy, isCritical);
         }
 
-        public void OnPlayerDefend(Player player)
+        public IEnumerator OnPlayerDefend(Player player)
         {
             player.Defend();
+            yield return null;
         }
 
         /// <summary>
         /// random event for player to heal
         /// </summary>
         /// <param name="player"></param>
-        public void OnPlayerHeal(Player player)
+        public IEnumerator OnPlayerHeal(Player player)
         {
-            float healRate = LoadEventConfigFromFile("heal_rate", player);
-            isHeal = random.NextDouble() < healRate;
+            int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
+            isHeal = random.NextDouble() < eventData[whichPlayer][1];
             if (isHeal)
             {
-                float healAmount = LoadEventConfigFromFile("heal_amount", player);
-                player.Heal((int)healAmount);
+                //Debug.Log($"Healing {player.PlayerCharacter.Name} for {eventData[whichPlayer][2]} HP");
+                yield return player.Heal((int)eventData[whichPlayer][2]);
             }
         }
 
@@ -50,18 +70,18 @@ namespace RPGBattle
         /// random event for player to take damage
         /// </summary>
         /// <param name="player"></param>
-        public void OnPlayerTakeEventDamage(Player player)
+        public IEnumerator OnPlayerTakeEventDamage(Player player)
         {
-            float damageRate = LoadEventConfigFromFile("damage_rate", player);
-            isDamage = random.NextDouble() < damageRate;
+            int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
+            isDamage = random.NextDouble() < eventData[whichPlayer][3];
             if (isDamage)
             {
-                float damageAmount = LoadEventConfigFromFile("damage_amount", player);
-                player.TakeDamage((int)damageAmount, true);
+                //Debug.Log("Player takes damage: " + eventData[whichPlayer][4]);
+                yield return player.TakeDamage((int)eventData[whichPlayer][4], true);
             }
         }
 
-        private float LoadEventConfigFromFile(string fileName, Player player)
+        private float LoadEventConfigFromFile(string fileName, string characterName)
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, "EventConfig", fileName + ".csv");
 
@@ -77,7 +97,7 @@ namespace RPGBattle
                 {
                     string[] values = line.Split(',');
                     // Check if the name matches the first column
-                    if (values.Length > 1 && values[0] == player.PlayerCharacter.Name)
+                    if (values.Length > 1 && values[0] == characterName)
                     {
                         if (float.TryParse(values[1], out float targetValue))
                         {
@@ -90,7 +110,7 @@ namespace RPGBattle
             {
                 Debug.LogError($"Error reading {fileName}.csv: {ex.Message}");
             }
-            Debug.LogWarning($"Value for {player.PlayerCharacter.Name} not found in {fileName}.csv");
+            Debug.LogWarning($"Value for {characterName} not found in {fileName}.csv");
             return 0;
         }
     }

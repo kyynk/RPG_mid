@@ -1,9 +1,10 @@
 using TMPro;
 using System;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
 
 namespace RPGBattle
 {
@@ -34,7 +35,7 @@ namespace RPGBattle
         {
             GameObject runnerObject = new GameObject("CoroutineRunner");
             coroutineRunner = runnerObject.AddComponent<CoroutineRunner>();
-            eventHandler = new EventHandler();
+            eventHandler = new EventHandler(new List<string> { "Giant", "Paladin" });
             players = new Player[2];
             players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield", coroutineRunner);
             players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield", coroutineRunner);
@@ -142,19 +143,19 @@ namespace RPGBattle
                              ", DEFEND=" + (players[1].PlayerCharacter.IsDefend ? "true" : "false");
         }
 
-        public void NextTurn(string action)
+        public IEnumerator NextTurn(string action)
         {
             // every turn need two players to attack each other, so we need to get the current player and the opponent
             Player currentPlayer = players[playerTurn];
             Player opponent = players[(playerTurn + 1) % 2];
-
+            buttonAction.DisableFighterActionButtons();
             if (action == "attack")
             {
-                eventHandler.OnPlayerAttack(currentPlayer, opponent);
+                yield return eventHandler.OnPlayerAttack(currentPlayer, opponent);
             }
             else if (action == "defend")
             {
-                eventHandler.OnPlayerDefend(currentPlayer);
+                yield return eventHandler.OnPlayerDefend(currentPlayer);
             }
             else
             {
@@ -175,8 +176,9 @@ namespace RPGBattle
                 UpdateTurnText();
                 playerTurn = (playerTurn + 1) % 2;
                 UpdateTurnImg();
+                yield return TriggerRandomEvent();
                 UpdateDebugInfo(); // update debug info for state
-                TriggerRandomEvent();
+                buttonAction.EnableFighterActionButtons();
             }
         }
 
@@ -192,6 +194,7 @@ namespace RPGBattle
             matchInfoPanel.SetActive(true);
             turnInfo.SetActive(false);
             buttonAction.DisableFighterActionButtons();
+            buttonAction.EnableContinueButton();
         }
 
         private void UpdateMatchResult()
@@ -214,16 +217,17 @@ namespace RPGBattle
             pointResultText.text = playerPoint[0] + " - " + playerPoint[1];
         }
 
-        private void TriggerRandomEvent()
+        private IEnumerator TriggerRandomEvent()
         {
             Player currentPlayer = players[playerTurn];
-            eventHandler.OnPlayerHeal(currentPlayer);
-            eventHandler.OnPlayerTakeEventDamage(currentPlayer);
+            yield return eventHandler.OnPlayerHeal(currentPlayer);
+            yield return eventHandler.OnPlayerTakeEventDamage(currentPlayer);
         }
 
         public void ContinueToNextMatch()
         {
             buttonAction.EnableFighterActionButtons(); // Re-enable buttons
+            buttonAction.DisableContinueButton(); // Hide Continue button
             if (IsGameOver())
             {
                 WriteWinnerToFile();

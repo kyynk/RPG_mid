@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace RPGBattle
@@ -25,7 +26,7 @@ namespace RPGBattle
             shield = shieldObject;
             shield.SetActive(PlayerCharacter.IsDefend);
             healthBar = new HealthBar(healthBarImg.GetComponent<UnityEngine.UI.Image>());
-            healthBar.SetMaxHealth(PlayerCharacter.HP);
+            healthBar.SetMaxHealth(PlayerCharacter.GetMaxHp());
             coroutineRunner = _coroutineRunner;
         }
 
@@ -36,11 +37,14 @@ namespace RPGBattle
             shield.SetActive(PlayerCharacter.IsDefend);
         }
 
-        public void Attack(Player enemy, bool isCritical)
+        public IEnumerator Attack(Player enemy, bool isCritical)
         {
-            coroutineRunner.StartAttackCoroutine(PlayerCharacter, isCritical);
+            Debug.Log("Attack started");
+            yield return coroutineRunner.StartAttackCoroutine(PlayerCharacter, isCritical);
             int damage = isCritical ? PlayerCharacter.ATK * 2 : PlayerCharacter.ATK;
-            enemy.TakeDamage(damage, false);
+            Debug.Log("Triggering TakeDamage with damage: " + damage);
+            yield return enemy.TakeDamage(damage, false);
+            Debug.Log("sss");
         }
 
         public void Defend()
@@ -49,21 +53,28 @@ namespace RPGBattle
             shield.SetActive(PlayerCharacter.IsDefend);
         }
 
-        public void Heal(int amount)
+        public IEnumerator Heal(int amount)
         {
-            coroutineRunner.StartHealCoroutine(PlayerCharacter, amount);
+            yield return coroutineRunner.StartHealCoroutine(PlayerCharacter, amount);
+            if (PlayerCharacter.HP > PlayerCharacter.GetMaxHp())
+            {
+                PlayerCharacter.HP = PlayerCharacter.GetMaxHp();
+            }
             healthBar.SetHealth(PlayerCharacter.HP);
         }
 
-        public void TakeDamage(int amount, bool isEventDamage)
+        public IEnumerator TakeDamage(int amount, bool isEventDamage)
         {
-            coroutineRunner.StartTakeDamageCoroutine(PlayerCharacter, amount, isEventDamage);
+            Debug.Log("TakeDamage started");
+            yield return coroutineRunner.StartTakeDamageCoroutine(PlayerCharacter, amount, isEventDamage);
+            Debug.Log("TakeDamage finished");
             shield.SetActive(PlayerCharacter.IsDefend);
             if (PlayerCharacter.HP < 0)
             {
                 PlayerCharacter.HP = 0;
             }
             healthBar.SetHealth(PlayerCharacter.HP);
+            Debug.Log("TakeDamage finished!");
         }
 
         public bool IsCharacterDead()
