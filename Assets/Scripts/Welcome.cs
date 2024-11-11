@@ -114,7 +114,6 @@ namespace RPGBattle
 
         private void ShowWhoFirst()
         {
-            Debug.Log("Show Who First");
             hint.SetActive(false);
             whoFirst.SetActive(true);
             isPlayerSelectionlocked = false;

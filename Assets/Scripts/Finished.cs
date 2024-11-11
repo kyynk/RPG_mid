@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Finish : MonoBehaviour
+public class Finished : MonoBehaviour
 {
     public Button menuButton;
     public TMP_Text resultText;
@@ -17,7 +17,6 @@ public class Finish : MonoBehaviour
     void Start()
     {
         whoWinFilePath = Path.Combine(Application.streamingAssetsPath, "who_win.txt");
-        Debug.Log("whoWinFilePath: " + whoWinFilePath);
         menuButton.onClick.AddListener(BackToMenu);
         debugInfo.SetActive(false);
         

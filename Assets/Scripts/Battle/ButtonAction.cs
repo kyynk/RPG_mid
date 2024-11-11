@@ -7,14 +7,14 @@ namespace RPGBattle
     {
         public BattleSystem battleSystem;
         public Button attackButton;
-        public Button defenceButton;
+        public Button defendButton;
         public Button continueButton;
 
         void Start()
         {
             // Add listener for mouse clicks
             attackButton.onClick.AddListener(Attack);
-            defenceButton.onClick.AddListener(Defence);
+            defendButton.onClick.AddListener(Defend);
             continueButton.onClick.AddListener(ContinueNextMatch);
 
             // Initially disable ContinueButton
@@ -24,7 +24,7 @@ namespace RPGBattle
         // Update is called once per frame
         void Update()
         {
-            if (attackButton.interactable && defenceButton.interactable)
+            if (attackButton.interactable && defendButton.interactable)
             {
                 if (Input.GetKeyDown("a"))
                 {
@@ -32,7 +32,7 @@ namespace RPGBattle
                 }
                 else if (Input.GetKeyDown("d"))
                 {
-                    Defence();
+                    Defend();
                 }
             }
             else if (Input.GetKeyDown("c"))
@@ -46,22 +46,22 @@ namespace RPGBattle
             battleSystem.NextTurn("attack");
         }
 
-        public void Defence()
+        public void Defend()
         {
-            battleSystem.NextTurn("defence");
+            battleSystem.NextTurn("defend");
         }
 
         public void DisableFighterActionButtons()
         {
             attackButton.interactable = false;
-            defenceButton.interactable = false;
+            defendButton.interactable = false;
             continueButton.gameObject.SetActive(true); // Show Continue button
         }
 
         public void EnableFighterActionButtons()
         {
             attackButton.interactable = true;
-            defenceButton.interactable = true;
+            defendButton.interactable = true;
             continueButton.gameObject.SetActive(false); // Hide Continue button
         }
 

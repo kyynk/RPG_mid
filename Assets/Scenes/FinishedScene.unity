@@ -1049,7 +1049,7 @@ GameObject:
   - component: {fileID: 1094317592}
   - component: {fileID: 1094317591}
   m_Layer: 0
-  m_Name: Finish
+  m_Name: Finished
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

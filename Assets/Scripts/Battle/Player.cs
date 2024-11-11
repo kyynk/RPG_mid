@@ -2,73 +2,73 @@ using UnityEngine;
 
 namespace RPGBattle
 {
-    public class Player : IPlayer
+    public class Player
     {
-        public Character Character {  get; set; }
+        public Character PlayerCharacter { get; set; }
         private CoroutineRunner coroutineRunner;
         private HealthBar healthBar;
-        private GameObject shieldImg;
+        private GameObject shield;
 
-        public Player(Character _character, string playerHealthBar, string playerShield, CoroutineRunner _coroutineRunner)
+        public Player(Character _character, string _healthBarTag, string _shieldTag, CoroutineRunner _coroutineRunner)
         {
-            Character = _character;
-            GameObject healthBarImg = GameObject.FindGameObjectWithTag(playerHealthBar);
+            PlayerCharacter = _character;
+            GameObject healthBarImg = GameObject.FindGameObjectWithTag(_healthBarTag);
             if (healthBarImg == null)
             {
-                Debug.LogError($"Health bar image for {playerHealthBar} not found!");
+                Debug.LogError($"Health bar image for {_healthBarTag} not found!");
             }
-            GameObject defendImg = GameObject.FindGameObjectWithTag(playerShield);
-            if (defendImg == null)
+            GameObject shieldObject = GameObject.FindGameObjectWithTag(_shieldTag);
+            if (shieldObject == null)
             {
-                Debug.LogError($"Defend image for {playerShield} not found!");
+                Debug.LogError($"Defend image for {_shieldTag} not found!");
             }
-            shieldImg = defendImg;
-            shieldImg.SetActive(Character.IsDefend);
+            shield = shieldObject;
+            shield.SetActive(PlayerCharacter.IsDefend);
             healthBar = new HealthBar(healthBarImg.GetComponent<UnityEngine.UI.Image>());
-            healthBar.SetMaxHealth(Character.HP);
+            healthBar.SetMaxHealth(PlayerCharacter.HP);
             coroutineRunner = _coroutineRunner;
         }
 
         public void ResetStatus()
         {
-            Character.ResetStatus();
-            healthBar.SetHealth(Character.HP);
-            shieldImg.SetActive(Character.IsDefend);
+            PlayerCharacter.ResetStatus();
+            healthBar.SetHealth(PlayerCharacter.HP);
+            shield.SetActive(PlayerCharacter.IsDefend);
         }
 
-        public void Attack(IPlayer enemy, bool isCritical)
+        public void Attack(Player enemy, bool isCritical)
         {
-            coroutineRunner.StartAttackCoroutine(Character, isCritical);
-            int damage = isCritical ? Character.ATK * 2 : Character.ATK;
+            coroutineRunner.StartAttackCoroutine(PlayerCharacter, isCritical);
+            int damage = isCritical ? PlayerCharacter.ATK * 2 : PlayerCharacter.ATK;
             enemy.TakeDamage(damage, false);
         }
 
         public void Defend()
         {
-            Character.IsDefend = true;
-            shieldImg.SetActive(Character.IsDefend);
+            PlayerCharacter.IsDefend = true;
+            shield.SetActive(PlayerCharacter.IsDefend);
         }
 
         public void Heal(int amount)
         {
-            coroutineRunner.StartHealCoroutine(Character, amount);
-            healthBar.SetHealth(Character.HP);
+            coroutineRunner.StartHealCoroutine(PlayerCharacter, amount);
+            healthBar.SetHealth(PlayerCharacter.HP);
         }
 
         public void TakeDamage(int amount, bool isEventDamage)
         {
-            coroutineRunner.StartTakeDamageCoroutine(Character, amount, isEventDamage);
-            shieldImg.SetActive(Character.IsDefend);
-            if (Character.HP < 0)
+            coroutineRunner.StartTakeDamageCoroutine(PlayerCharacter, amount, isEventDamage);
+            shield.SetActive(PlayerCharacter.IsDefend);
+            if (PlayerCharacter.HP < 0)
             {
-                Character.HP = 0;
+                PlayerCharacter.HP = 0;
             }
-            healthBar.SetHealth(Character.HP);
+            healthBar.SetHealth(PlayerCharacter.HP);
         }
 
         public bool IsCharacterDead()
         {
-            return Character.HP <= 0;
+            return PlayerCharacter.HP <= 0;
         }
     }
 }

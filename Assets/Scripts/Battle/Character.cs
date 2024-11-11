@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RPGBattle
 {
-    public class Character : ICharacter
+    public class Character
     {
         public int HP { get; set; }
         public int ATK { get; set; }

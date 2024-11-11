@@ -9,9 +9,20 @@ namespace RPGBattle
 {
     public class BattleSystem : MonoBehaviour
     {
+        // UI references
+        public GameObject debugInfo;
+        public GameObject playerATurn;
+        public GameObject playerBTurn;
+        public GameObject turnInfo;
+        public GameObject matchInfoPanel; // MatchInfo panel
+        public TMP_Text debugText;
+        public TMP_Text matchResultText; // Match result text
+        public TMP_Text pointResultText; // Point result text
+        public ButtonAction buttonAction;
+
         private EventHandler eventHandler;
         private CoroutineRunner coroutineRunner;
-        private IPlayer[] players;
+        private Player[] players;
         private int playerTurn; // 0 or 1 (player 1 or player 2)
         private int turnCount;
         private int[] playerPoint;
@@ -19,23 +30,12 @@ namespace RPGBattle
         private string whoFirstFilePath;
         private string whoWinFilePath;
 
-        // UI references
-        public GameObject debugInfo;
-        public GameObject playerATurn;
-        public GameObject playerBTurn;
-        public GameObject turnInfoText;
-        public GameObject matchInfoPanel; // MatchInfo panel
-        public TMP_Text debugText;
-        public TMP_Text matchResultText; // Match result text
-        public TMP_Text pointResultText; // Point result text
-        public ButtonAction buttonAction;
-
         private void Start()
         {
             GameObject runnerObject = new GameObject("CoroutineRunner");
             coroutineRunner = runnerObject.AddComponent<CoroutineRunner>();
             eventHandler = new EventHandler();
-            players = new IPlayer[2];
+            players = new Player[2];
             players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield", coroutineRunner);
             players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield", coroutineRunner);
             playerPoint = new int[2] { 0, 0 };
@@ -66,7 +66,7 @@ namespace RPGBattle
             turnCount = 1;
             SetFirstPlayer();
             matchInfoPanel.SetActive(false);
-            turnInfoText.SetActive(true);
+            turnInfo.SetActive(true);
             foreach (Player player in players)
             {
                 player.ResetStatus();
@@ -120,48 +120,39 @@ namespace RPGBattle
 
         private void UpdateTurnText()
         {
-            GameObject turnInfoText = GameObject.FindGameObjectWithTag("TurnInfo");
+            TMP_Text turnInfoText = turnInfo.GetComponent<TMP_Text>();
             if (turnInfoText != null)
             {
-                TMP_Text textComponent = turnInfoText.GetComponent<TMP_Text>();
-                if (textComponent != null)
-                {
-                    textComponent.text = "Round " + turnCount;
-                }
-                else
-                {
-                    Debug.LogError("Text component is missing on TurnText GameObject!");
-                }
+                turnInfoText.text = "Round " + turnCount;
             }
             else
             {
-                Debug.LogError("TurnText UI element is not assigned in the Inspector!");
+                Debug.LogError("Text component is missing on TurnText GameObject!");
             }
         }
 
         private void UpdateDebugInfo()
         {
-            Debug.Log(debugText.text);
             debugText.text = "State: " + (playerTurn == 0 ? "Player A" : "Player B") + "\n" +
-                             "Player A: \nHP=" + players[0].Character.HP +
-                             ", ATK=" + players[0].Character.ATK +
-                             ", DEFEND=" + (players[0].Character.IsDefend ? "true" : "false") + "\n" +
-                             "Player B: \nHP=" + players[1].Character.HP +
-                             ", ATK=" + players[1].Character.ATK +
-                             ", DEFEND=" + (players[1].Character.IsDefend ? "true" : "false");
+                             "Player A: \nHP=" + players[0].PlayerCharacter.HP +
+                             ", ATK=" + players[0].PlayerCharacter.ATK +
+                             ", DEFEND=" + (players[0].PlayerCharacter.IsDefend ? "true" : "false") + "\n" +
+                             "Player B: \nHP=" + players[1].PlayerCharacter.HP +
+                             ", ATK=" + players[1].PlayerCharacter.ATK +
+                             ", DEFEND=" + (players[1].PlayerCharacter.IsDefend ? "true" : "false");
         }
 
         public void NextTurn(string action)
         {
             // every turn need two players to attack each other, so we need to get the current player and the opponent
-            IPlayer currentPlayer = players[playerTurn];
-            IPlayer opponent = players[(playerTurn + 1) % 2];
+            Player currentPlayer = players[playerTurn];
+            Player opponent = players[(playerTurn + 1) % 2];
 
             if (action == "attack")
             {
                 eventHandler.OnPlayerAttack(currentPlayer, opponent);
             }
-            else if (action == "defence")
+            else if (action == "defend")
             {
                 eventHandler.OnPlayerDefend(currentPlayer);
             }
@@ -197,13 +188,13 @@ namespace RPGBattle
 
         private void NewMatch()
         {
-            WhoWin();
+            UpdateMatchResult();
             matchInfoPanel.SetActive(true);
-            turnInfoText.SetActive(false);
+            turnInfo.SetActive(false);
             buttonAction.DisableFighterActionButtons();
         }
 
-        private void WhoWin()
+        private void UpdateMatchResult()
         {
             // has results: p1 win, p2 win, draw
             if (players[1].IsCharacterDead())
@@ -225,9 +216,9 @@ namespace RPGBattle
 
         private void TriggerRandomEvent()
         {
-            IPlayer currentPlayer = players[playerTurn];
+            Player currentPlayer = players[playerTurn];
             eventHandler.OnPlayerHeal(currentPlayer);
-            eventHandler.OnPlayerTakeDamage(currentPlayer);
+            eventHandler.OnPlayerTakeEventDamage(currentPlayer);
         }
 
         public void ContinueToNextMatch()

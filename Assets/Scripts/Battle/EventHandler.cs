@@ -19,14 +19,14 @@ namespace RPGBattle
             isDamage = false;
         }
 
-        public void OnPlayerAttack(IPlayer player, IPlayer enemy)
+        public void OnPlayerAttack(Player player, Player enemy)
         {
             float critRate = LoadEventConfigFromFile("crit_rate", player);
             isCritical = random.NextDouble() < critRate;
             player.Attack(enemy, isCritical);
         }
 
-        public void OnPlayerDefend(IPlayer player)
+        public void OnPlayerDefend(Player player)
         {
             player.Defend();
         }
@@ -35,7 +35,7 @@ namespace RPGBattle
         /// random event for player to heal
         /// </summary>
         /// <param name="player"></param>
-        public void OnPlayerHeal(IPlayer player)
+        public void OnPlayerHeal(Player player)
         {
             float healRate = LoadEventConfigFromFile("heal_rate", player);
             isHeal = random.NextDouble() < healRate;
@@ -50,7 +50,7 @@ namespace RPGBattle
         /// random event for player to take damage
         /// </summary>
         /// <param name="player"></param>
-        public void OnPlayerTakeDamage(IPlayer player)
+        public void OnPlayerTakeEventDamage(Player player)
         {
             float damageRate = LoadEventConfigFromFile("damage_rate", player);
             isDamage = random.NextDouble() < damageRate;
@@ -61,7 +61,7 @@ namespace RPGBattle
             }
         }
 
-        private float LoadEventConfigFromFile(string fileName, IPlayer player)
+        private float LoadEventConfigFromFile(string fileName, Player player)
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, "EventConfig", fileName + ".csv");
 
@@ -77,7 +77,7 @@ namespace RPGBattle
                 {
                     string[] values = line.Split(',');
                     // Check if the name matches the first column
-                    if (values.Length > 1 && values[0] == player.Character.Name)
+                    if (values.Length > 1 && values[0] == player.PlayerCharacter.Name)
                     {
                         if (float.TryParse(values[1], out float targetValue))
                         {
@@ -90,7 +90,7 @@ namespace RPGBattle
             {
                 Debug.LogError($"Error reading {fileName}.csv: {ex.Message}");
             }
-            Debug.LogWarning($"Value for {player.Character.Name} not found in {fileName}.csv");
+            Debug.LogWarning($"Value for {player.PlayerCharacter.Name} not found in {fileName}.csv");
             return 0;
         }
     }
