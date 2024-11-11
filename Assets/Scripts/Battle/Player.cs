@@ -39,12 +39,9 @@ namespace RPGBattle
 
         public IEnumerator Attack(Player enemy, bool isCritical)
         {
-            Debug.Log("Attack started");
             yield return coroutineRunner.StartAttackCoroutine(PlayerCharacter, isCritical);
             int damage = isCritical ? PlayerCharacter.ATK * 2 : PlayerCharacter.ATK;
-            Debug.Log("Triggering TakeDamage with damage: " + damage);
             yield return enemy.TakeDamage(damage, false);
-            Debug.Log("sss");
         }
 
         public void Defend()
@@ -65,16 +62,13 @@ namespace RPGBattle
 
         public IEnumerator TakeDamage(int amount, bool isEventDamage)
         {
-            Debug.Log("TakeDamage started");
             yield return coroutineRunner.StartTakeDamageCoroutine(PlayerCharacter, amount, isEventDamage);
-            Debug.Log("TakeDamage finished");
             shield.SetActive(PlayerCharacter.IsDefend);
             if (PlayerCharacter.HP < 0)
             {
                 PlayerCharacter.HP = 0;
             }
             healthBar.SetHealth(PlayerCharacter.HP);
-            Debug.Log("TakeDamage finished!");
         }
 
         public bool IsCharacterDead()

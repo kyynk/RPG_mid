@@ -39,9 +39,7 @@ namespace RPGBattle
         public IEnumerator OnPlayerAttack(Player player, Player enemy)
         {
             int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
-            //Debug.Log("Player " + characterNames[whichPlayer] + " attacks!");
             isCritical = random.NextDouble() < eventData[whichPlayer][0];
-            //Debug.Log("eventData " + eventData[whichPlayer][0] + " " + eventData[whichPlayer][1] + " " + eventData[whichPlayer][2] + " " + eventData[whichPlayer][3] + " " + eventData[whichPlayer][4]);
             yield return player.Attack(enemy, isCritical);
         }
 
@@ -61,7 +59,6 @@ namespace RPGBattle
             isHeal = random.NextDouble() < eventData[whichPlayer][1];
             if (isHeal)
             {
-                //Debug.Log($"Healing {player.PlayerCharacter.Name} for {eventData[whichPlayer][2]} HP");
                 yield return player.Heal((int)eventData[whichPlayer][2]);
             }
         }
@@ -76,7 +73,6 @@ namespace RPGBattle
             isDamage = random.NextDouble() < eventData[whichPlayer][3];
             if (isDamage)
             {
-                //Debug.Log("Player takes damage: " + eventData[whichPlayer][4]);
                 yield return player.TakeDamage((int)eventData[whichPlayer][4], true);
             }
         }
