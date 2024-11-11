@@ -114,7 +114,7 @@ namespace RPGBattle
             if (!File.Exists(filePath))
             {
                 Debug.LogError($"File {fileName} not found!");
-                return ReturnDefaultValue(fileName);
+                return ReturnDefaultFileValue(fileName);
             }
 
             try
@@ -139,10 +139,10 @@ namespace RPGBattle
             }
 
             Debug.LogWarning($"Value for {Name} not found in {fileName}.csv. Using default value.");
-            return ReturnDefaultValue(fileName);
+            return ReturnDefaultFileValue(fileName);
         }
 
-        private int ReturnDefaultValue(string type)
+        private int ReturnDefaultFileValue(string type)
         {
             return type == "atk" ? 10 : 100;
         }
