@@ -8,6 +8,15 @@ namespace RPGBattle
 {
     public class EventHandler
     {
+        private enum EventDataType
+        {
+            CRIT_RATE,
+            HEAL_RATE,
+            HEAL_AMOUNT,
+            DAMAGE_RATE,
+            DAMAGE_AMOUNT
+        }
+
         private System.Random random; // using System.Random, since Unity's Random not random enough
         private bool isCritical;
         private bool isHeal;
@@ -39,7 +48,7 @@ namespace RPGBattle
         public IEnumerator OnPlayerAttack(Player player, Player enemy)
         {
             int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
-            isCritical = random.NextDouble() < eventData[whichPlayer][0];
+            isCritical = random.NextDouble() < eventData[whichPlayer][EventDataType.CRIT_RATE.GetHashCode()];
             yield return player.Attack(enemy, isCritical);
         }
 
@@ -56,10 +65,10 @@ namespace RPGBattle
         public IEnumerator OnPlayerHeal(Player player)
         {
             int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
-            isHeal = random.NextDouble() < eventData[whichPlayer][1];
+            isHeal = random.NextDouble() < eventData[whichPlayer][EventDataType.HEAL_RATE.GetHashCode()];
             if (isHeal)
             {
-                yield return player.Heal((int)eventData[whichPlayer][2]);
+                yield return player.Heal((int)eventData[whichPlayer][EventDataType.HEAL_AMOUNT.GetHashCode()]);
             }
         }
 
@@ -70,10 +79,10 @@ namespace RPGBattle
         public IEnumerator OnPlayerTakeEventDamage(Player player)
         {
             int whichPlayer = characterNames.FindIndex(x => x == player.PlayerCharacter.Name);
-            isDamage = random.NextDouble() < eventData[whichPlayer][3];
+            isDamage = random.NextDouble() < eventData[whichPlayer][EventDataType.DAMAGE_RATE.GetHashCode()];
             if (isDamage)
             {
-                yield return player.TakeDamage((int)eventData[whichPlayer][4], true);
+                yield return player.TakeDamage((int)eventData[whichPlayer][EventDataType.DAMAGE_AMOUNT.GetHashCode()], true);
             }
         }
 
