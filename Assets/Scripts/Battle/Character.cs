@@ -102,7 +102,7 @@ namespace RPGBattle
 
         private int LoadValueFromFile(string fileName)
         {
-            string filePath = Path.Combine(Application.dataPath, "ConfigForGame", "PlayerConfig", fileName + ".csv");
+            string filePath = Path.Combine(Application.streamingAssetsPath, "PlayerConfig", fileName + ".csv");
 
             if (!File.Exists(filePath))
             {

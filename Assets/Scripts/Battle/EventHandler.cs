@@ -63,7 +63,7 @@ namespace RPGBattle
 
         private float LoadEventConfigFromFile(string fileName, IPlayer player)
         {
-            string filePath = Path.Combine(Application.dataPath, "ConfigForGame", "EventConfig", fileName + ".csv");
+            string filePath = Path.Combine(Application.streamingAssetsPath, "EventConfig", fileName + ".csv");
 
             if (!File.Exists(filePath))
             {

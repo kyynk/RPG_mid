@@ -27,7 +27,7 @@ namespace RPGBattle
 
         void Start()
         {
-            filePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt"); // Set file path
+            filePath = Path.Combine(Application.streamingAssetsPath, "who_first.txt"); // Set file path
 
             whoFirstButton.onClick.AddListener(ShowWhoFirst);
             hintButton.onClick.AddListener(ShowHint);

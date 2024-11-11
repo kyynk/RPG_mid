@@ -16,13 +16,14 @@ public class Finish : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        whoWinFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_win.txt");
+        whoWinFilePath = Path.Combine(Application.streamingAssetsPath, "who_win.txt");
+        Debug.Log("whoWinFilePath: " + whoWinFilePath);
         menuButton.onClick.AddListener(BackToMenu);
         debugInfo.SetActive(false);
-        resultText.text = File.ReadAllText(whoWinFilePath) + "!!!";
+        
+        resultText.text = GetWhoWin() + "!!!";
         debugText.text = "State: Finished\n" +
-                         "Winner:" +
-                         File.ReadAllText(whoWinFilePath);
+                         "Winner:" + GetWhoWin();
     }
 
     // Update is called once per frame

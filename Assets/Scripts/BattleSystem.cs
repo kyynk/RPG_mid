@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 namespace RPGBattle
 {
@@ -38,8 +39,8 @@ namespace RPGBattle
             players[0] = new Player(new Character("Giant"), "L_HP", "L_Shield", coroutineRunner);
             players[1] = new Player(new Character("Paladin"), "R_HP", "R_Shield", coroutineRunner);
             playerPoint = new int[2] { 0, 0 };
-            whoFirstFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_first.txt");
-            whoWinFilePath = Path.Combine(Application.dataPath, "ConfigForGame", "who_win.txt");
+            whoFirstFilePath = Path.Combine(Application.streamingAssetsPath, "who_first.txt");
+            whoWinFilePath = Path.Combine(Application.streamingAssetsPath, "who_win.txt");
             debugInfo.SetActive(false);
             InitSomeSettings();
         }
